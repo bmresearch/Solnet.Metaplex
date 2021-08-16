@@ -53,47 +53,52 @@ namespace Solnet.Metaplex
             /// <summary>
             /// 
             /// </summary>
-            DeprecatedSetReservationList = 4,
+            UpdatePrimarySaleHappenedViaToken = 4,
 
             /// <summary>
             /// 
             /// </summary>
-            DeprecatedCreateReservationList = 5,
+            DeprecatedSetReservationList = 5,
 
             /// <summary>
             /// 
             /// </summary>
-            SignMetadata = 6,
+            DeprecatedCreateReservationList = 6,
 
             /// <summary>
             /// 
             /// </summary>
-            DeprecatedMintPrintingTokensViaToken = 7,
+            SignMetadata = 7,
 
             /// <summary>
             /// 
             /// </summary>
-            CreateMasterEdition = 8,
+            DeprecatedMintPrintingTokensViaToken = 8,
 
             /// <summary>
             /// 
             /// </summary>
-            MintNewEditionFromMasterEditionViaToken = 9,
+            CreateMasterEdition = 9,
 
             /// <summary>
             /// 
             /// </summary>
-            ConvertMasterEditionV1ToV2 = 10,
+            MintNewEditionFromMasterEditionViaToken = 10,
 
             /// <summary>
             /// 
             /// </summary>
-            MintNewEditionFromMasterEditionViaVaultProxy = 11,
+            ConvertMasterEditionV1ToV2 = 11,
 
             /// <summary>
             /// 
             /// </summary>
-            PuffMetadata = 12
+            MintNewEditionFromMasterEditionViaVaultProxy = 12,
+
+            /// <summary>
+            /// 
+            /// </summary>
+            PuffMetadata = 13
 
         }
     }
