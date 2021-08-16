@@ -2,18 +2,18 @@
 
     <PropertyGroup>
         <Description>
-            Solnet.Template implements functionality to integrate Template project into .Net applications.
+            Solnet.Metaplex implements functionality to integrate Metaplex project into .Net applications.
         </Description>
         <TargetFramework>net5.0</TargetFramework>
 
         <IsPackable>false</IsPackable>
 
-        <RootNamespace>Solnet.Template</RootNamespace>
+        <RootNamespace>Solnet.Metaplex</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-            <_Parameter1>Solnet.Template.Test</_Parameter1>
+            <_Parameter1>Solnet.Metaplex.Test</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
 

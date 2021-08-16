@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Solnet.Template\Solnet.Template.csproj" />
+        <ProjectReference Include="..\Solnet.Metaplex\Solnet.Metaplex.csproj" />
     </ItemGroup>
 
 </Project>

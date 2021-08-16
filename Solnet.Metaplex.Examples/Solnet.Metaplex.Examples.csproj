@@ -3,11 +3,11 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
-        <RootNamespace>Solnet.Template.Examples</RootNamespace>
+        <RootNamespace>Solnet.Metaplex.Examples</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Solnet.Template\Solnet.Template.csproj" />
+        <ProjectReference Include="..\Solnet.Metaplex\Solnet.Metaplex.csproj" />
     </ItemGroup>
 
     <ItemGroup>
