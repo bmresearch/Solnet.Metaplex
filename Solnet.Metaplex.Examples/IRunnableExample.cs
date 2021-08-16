@@ -1,4 +1,4 @@
-namespace Solnet.Template.Examples
+namespace Solnet.Metaplex.Examples
 {
     /// <summary>
     /// Defines functionality for an example.
