@@ -16,7 +16,7 @@ namespace Solnet.Metaplex
     /// https://www.notion.so/Metaplex-Developer-Guide-afefbc19841744c28587ab948a08cfac
     /// </remarks>
     /// </summary>
-    public static class TokenProgram
+    public static class MetadataProgram
         {
             /// <summary>
             /// The public key of the Metadata Program.
