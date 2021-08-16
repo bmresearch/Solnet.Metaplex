@@ -17,7 +17,7 @@ namespace Solnet.Metaplex
     /// </remarks>
     /// </summary>
     public static class MetadataProgram
-        {
+    {
             /// <summary>
             /// The public key of the Metadata Program.
             /// </summary>
@@ -27,5 +27,5 @@ namespace Solnet.Metaplex
             /// The program's name.
             /// </summary>
             private const string ProgramName = "Metadata Program";
-
+    }
 }
