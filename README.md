@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/mariomatic/Solnet.Metaplex/master/assets/metaplex-serum-icon.png" margin="auto" height="175"/>
+    <img src="https://raw.githubusercontent.com/mariomatic/Solnet.Metaplex/master/assets/solnet-metaplex-icon.png" margin="auto" height="100"/>
 </p>
 
 <p align="center">

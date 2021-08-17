@@ -1,0 +1,21 @@
+pub const MAX_METADATA_LEN: usize = 1
+    + 32
+    + 32
+    // -- start of name  -- offset = 65
+    + 4
+    + MAX_NAME_LENGTH //32  //
+    // -- symbol -- offset = 101
+    + 4
+    + MAX_SYMBOL_LENGTH //10
+    // -- uri -- offset = 115
+    + 4
+    + MAX_URI_LENGTH //200
+    + 2 // maybe feeBasis? offset = 319
+    + 1 // maybe feeBasis?
+    // -- creators -- offset =  322
+    + 4
+    + MAX_CREATOR_LIMIT * MAX_CREATOR_LEN //5*34=170
+    + 1 // offset = 492 
+    + 1
+    + 9
+    + 172; // SUM : 679
