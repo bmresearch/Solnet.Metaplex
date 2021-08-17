@@ -56,7 +56,7 @@ namespace Solnet.Metaplex
             methodBuffer.WriteSpan(encodedName, MetadataProgramLayout.nameOffset); // + 32
             methodBuffer.WriteSpan(encodedSymbol, MetadataProgramLayout.symbolOffset); // + 10
             methodBuffer.WriteSpan(encodedUri, MetadataProgramLayout.uriOffset); // + 200??
-            methodBuffer.WriteU8((byte)parameters.sellerFeeBasisPoints);
+            methodBuffer.WriteU8((byte)parameters.sellerFeeBasisPoints, MetadataProgramLayout.feeBasisOffset );
             int count=1;
             foreach ( Creator c in parameters.creators)
             {

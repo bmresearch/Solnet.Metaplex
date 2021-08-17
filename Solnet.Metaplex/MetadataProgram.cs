@@ -2,6 +2,7 @@ using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
+using Solnet.Programs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace Solnet.Metaplex
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = MetadaProgramData.EncodeCreateMetadataAccountData( dataParameters , isMutable )
+                Data = MetadataProgramData.EncodeCreateMetadataAccountData( dataParameters , isMutable )
             };
         }
     }
