@@ -36,14 +36,18 @@ namespace Solnet.Metaplex
         /// </summary>
         /// <param name="metadataKey"> Metadata key (pda of ['metadata', program id, mint id]) </param>
         /// <param name="mintKey"> Mint of token asset </param>
-        /// <param name="authority"> Mint authority </param>
-        /// <param name="payer"> Transaction payer </param>
-        /// <param name="dataParameters"> Metadata struct with name,symbol,uri and optional list of creators </param>
+        /// <param name="authorityKey"> Mint authority </param>
+        /// <param name="payerKey"> Transaction payer </param>
+        /// <param name="data"> Metadata struct with name,symbol,uri and optional list of creators </param>
         /// <param name="isMutable"> Will the account stay mutable.</param>
         /// <returns>The transaction instruction.</returns> 
         public static TransactionInstruction CreateMetadataAccount (
-            PublicKey metadataKey, PublicKey mintKey, PublicKey authority, PublicKey payer, 
-            MetadataParameters dataParameters, bool isMutable
+            PublicKey metadataKey, 
+            PublicKey mintKey, 
+            PublicKey authorityKey, 
+            PublicKey payerKey, 
+            MetadataParameters data, 
+            bool isMutable
         )
         {
 
@@ -51,18 +55,94 @@ namespace Solnet.Metaplex
             {
                 AccountMeta.Writable(metadataKey, false),
                 AccountMeta.ReadOnly(mintKey, false),
-                AccountMeta.ReadOnly(authority, true),
-                AccountMeta.ReadOnly(payer, true),
+                AccountMeta.ReadOnly(authorityKey, true),
+                AccountMeta.ReadOnly(payerKey, true),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
+
 
             return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = MetadataProgramData.EncodeCreateMetadataAccountData( dataParameters , isMutable )
+                Data = MetadataProgramData.EncodeCreateMetadataAccountData( data , isMutable )
             };
         }
+
+        ///<summary>
+        /// Update metadata account.
+        ///</summary>
+        public static TransactionInstruction UpdateMetadataAccount (
+            PublicKey metadataKey,
+            PublicKey updateAuthority,
+            PublicKey newUpdateAuthority,
+            MetadataParameters data,
+            bool primarySaleHappend
+        )
+        {
+            List<AccountMeta> keys = new()
+            {
+                AccountMeta.Writable(metadataKey, false),
+                AccountMeta.ReadOnly(updateAuthority, true)
+            };
+
+            return new TransactionInstruction 
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = MetadataProgramData.EncodeUpdateMetadataData( data, newUpdateAuthority, primarySaleHappend )
+            };
+        }
+
+        /// <summary>
+        /// Sign a piece of metadata that has you as an unverified creator so that it is now verified.
+        /// </summary>
+        /// <param name="metadataKey"> PDA of ('metadata', program id, mint id) </param>
+        /// <param name="creatorKey"> Creator key </param>
+        /// <returns></returns>
+        public static TransactionInstruction SignMetada (
+            PublicKey metadataKey,
+            PublicKey creatorKey
+        )
+        {
+            byte[] data = new byte[1];
+            data.WriteU8((byte)MetadataProgramInstructions.Values.SignMetadata, 0);
+
+            return new TransactionInstruction()
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = new List<AccountMeta>() 
+                {
+                    AccountMeta.Writable( metadataKey , false),
+                    AccountMeta.ReadOnly( creatorKey, true)
+                },
+                Data = data
+            };
+        }
+
+        /// <summary>
+        /// Make all of metadata variable length fields (name/uri/symbol) a fixed length
+        /// </summary>
+        /// <param name="metadataKey"> PDA of ('metadata', program id, mint id) </param>
+        /// <returns></returns>
+        public static TransactionInstruction PuffMetada(
+            PublicKey metadataKey
+        )
+        {
+            byte[] data = new byte[1];
+            data.WriteU8((byte)MetadataProgramInstructions.Values.PuffMetadata, 0);
+
+            return new TransactionInstruction()
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = new List<AccountMeta>()
+                {
+                    AccountMeta.Writable( metadataKey , false )
+                },
+                Data = data
+            };
+        }
+
     }
 }
