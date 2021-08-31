@@ -18,6 +18,7 @@ namespace Solnet.Metaplex
             { Values.DeprecatedCreateReservationList, "Create Reservation List (deprecated)" },
             { Values.SignMetadata, "Sign Metadata" },
             { Values.DeprecatedMintPrintingTokensViaToken, "Mint PrintingTokens via token (deprecated)" },
+            { Values.DeprecatedMintPrintingTokens, "Mint PrintingTokens (deprecated)" },
             { Values.CreateMasterEdition, "Create MasterEdition" },
             { Values.MintNewEditionFromMasterEditionViaToken, "Mint new Edition from MasterEdition via token" },
             { Values.ConvertMasterEditionV1ToV2, "Convert Master Edition from V1 to V2" },
@@ -74,31 +75,35 @@ namespace Solnet.Metaplex
             /// 
             /// </summary>
             DeprecatedMintPrintingTokensViaToken = 8,
+            /// <summary>
+            /// 
+            /// </summary>
+            DeprecatedMintPrintingTokens = 9,
 
             /// <summary>
             /// 
             /// </summary>
-            CreateMasterEdition = 9,
+            CreateMasterEdition = 10,
 
             /// <summary>
             /// 
             /// </summary>
-            MintNewEditionFromMasterEditionViaToken = 10,
+            MintNewEditionFromMasterEditionViaToken = 11,
 
             /// <summary>
             /// 
             /// </summary>
-            ConvertMasterEditionV1ToV2 = 11,
+            ConvertMasterEditionV1ToV2 = 12,
 
             /// <summary>
             /// 
             /// </summary>
-            MintNewEditionFromMasterEditionViaVaultProxy = 12,
+            MintNewEditionFromMasterEditionViaVaultProxy = 13,
 
             /// <summary>
             /// 
             /// </summary>
-            PuffMetadata = 13
+            PuffMetadata = 14
 
         }
     }

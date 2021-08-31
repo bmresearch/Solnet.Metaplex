@@ -8,11 +8,11 @@ namespace Solnet.Metaplex
     {
         internal const int MethodOffset = 0;
 
-        internal const int nameOffset = 65;
+        internal const int nameOffset = 65; //69
 
-        internal const int symbolOffset = 101;
+        internal const int symbolOffset = 101; //105
 
-        internal const int uriOffset = 115;
+        internal const int uriOffset = 115; //
 
         internal const int feeBasisOffset = 319;
 
