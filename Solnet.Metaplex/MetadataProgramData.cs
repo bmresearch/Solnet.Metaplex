@@ -4,10 +4,13 @@ using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Buffers.Binary;
+using System.IO;
+using System.Text;
 
 
 namespace Solnet.Metaplex
 {
+
 
     public class Creator 
     {
@@ -15,6 +18,12 @@ namespace Solnet.Metaplex
         public bool verified;
         public uint share;
 
+        public Creator( PublicKey key,  uint share , bool verified = false )
+        {
+            this.key = key;
+            this.verified = verified;
+            this.share = share;
+        }
         public byte[] Encode() 
         {
             byte[] encodedBuffer = new byte[34];
@@ -51,6 +60,17 @@ namespace Solnet.Metaplex
     {
         internal const int MethodOffset = 0;
 
+        public static void PrintByteArray(byte[] bytes)
+        {
+            var sb = new StringBuilder("\nnew byte[] { ");
+            foreach (var b in bytes)
+            {
+                sb.Append(b + ", ");
+            }
+            sb.Append("}\n");
+            Console.WriteLine(sb.ToString());
+        }
+
         /// <summary>
         /// Make encodings for CreateMetadataAccount instruction
         /// </summary>
@@ -59,62 +79,75 @@ namespace Solnet.Metaplex
             bool isMutable=true
         )
         {
-            byte[] methodBuffer = new byte[679+1];
 
             byte[] encodedName = Serialization.EncodeRustString(parameters.name);
             byte[] encodedSymbol = Serialization.EncodeRustString(parameters.symbol);
             byte[] encodedUri = Serialization.EncodeRustString(parameters.uri);
 
-            methodBuffer.WriteU8((byte)MetadataProgramInstructions.Values.CreateMetadataAccount, MethodOffset); // 1
-            methodBuffer.WriteSpan(encodedName, MetadataProgramLayout.nameOffset); // + 32
-            methodBuffer.WriteSpan(encodedSymbol, MetadataProgramLayout.symbolOffset); // + 10
-            methodBuffer.WriteSpan(encodedUri, MetadataProgramLayout.uriOffset); // + 200??
-            methodBuffer.WriteU8((byte)parameters.sellerFeeBasisPoints, MetadataProgramLayout.feeBasisOffset );
-            int counter = 1;
-            foreach ( Creator c in parameters.creators)
-            {
-                byte[] encodedCreator = c.Encode();
-                methodBuffer.WriteSpan( encodedCreator , MetadataProgramLayout.creatorsOffset + counter * encodedCreator.Length );
-                counter++;
-            }
+            var buffer = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(buffer);
 
-            methodBuffer.WriteU8(Convert.ToByte(isMutable),679);
+            writer.Write( (byte) MetadataProgramInstructions.Values.CreateMetadataAccount );
+            writer.Write( encodedName) ;
+            writer.Write( encodedSymbol );
+            writer.Write( encodedUri );
+            writer.Write( (ushort) parameters.sellerFeeBasisPoints);
 
-            return methodBuffer;
+            if ( parameters.creators == null || parameters.creators?.Count < 1 ){
+                writer.Write(new byte[] { 0 }); //Option()
+            } else {
+                writer.Write((byte)1);
+                writer.Write( parameters.creators.Count );
+                foreach ( Creator c in parameters.creators )
+                {
+                    byte[] encodedCreator = c.Encode();
+                    writer.Write( encodedCreator );
+                }
+            }            
+
+            writer.Write(isMutable);
+
+            return buffer.ToArray();
         }
         
         /// <summary>
         /// Make encodings for UpdateMetadata instruction
         /// </summary>        
         internal static byte[] EncodeUpdateMetadataData (
-            MetadataParameters data, 
+            MetadataParameters parameters, 
             PublicKey newUpdateAuthority, 
             bool primarySaleHappend
         )
         {
-            byte[] methodBuffer = new byte[679+32+1];
+            byte[] encodedName = Serialization.EncodeRustString(parameters.name);
+            byte[] encodedSymbol = Serialization.EncodeRustString(parameters.symbol);
+            byte[] encodedUri = Serialization.EncodeRustString(parameters.uri);
 
-            byte[] encodedName = Serialization.EncodeRustString(data.name);
-            byte[] encodedSymbol = Serialization.EncodeRustString(data.symbol);
-            byte[] encodedUri = Serialization.EncodeRustString(data.uri);
+            var buffer = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(buffer);
 
-            methodBuffer.WriteU8((byte)MetadataProgramInstructions.Values.UpdateMetadataAccount, MethodOffset); // 0
-            methodBuffer.WriteSpan(encodedName, MetadataProgramLayout.nameOffset); // + 32
-            methodBuffer.WriteSpan(encodedSymbol, MetadataProgramLayout.symbolOffset); // + 10
-            methodBuffer.WriteSpan(encodedUri, MetadataProgramLayout.uriOffset); // + 200??
-            methodBuffer.WriteU8((byte)data.sellerFeeBasisPoints, MetadataProgramLayout.feeBasisOffset );
-            int counter = 1;
-            foreach ( Creator c in data.creators)
-            {
-                byte[] encodedCreator = c.Encode();
-                methodBuffer.WriteSpan( encodedCreator , MetadataProgramLayout.creatorsOffset + counter * encodedCreator.Length );
-                counter++;
+            writer.Write( (byte) MetadataProgramInstructions.Values.CreateMetadataAccount );
+            writer.Write( encodedName) ;
+            writer.Write( encodedSymbol );
+            writer.Write( encodedUri );
+            writer.Write( (ushort) parameters.sellerFeeBasisPoints);
+
+            if ( parameters.creators == null || parameters.creators?.Count < 1 ){
+                writer.Write(new byte[] { 0 }); //Option()
+            } else {
+                writer.Write((byte)1);
+                writer.Write( parameters.creators.Count );
+                foreach ( Creator c in parameters.creators )
+                {
+                    byte[] encodedCreator = c.Encode();
+                    writer.Write( encodedCreator );
+                }
             }
 
-            methodBuffer.WritePubKey(newUpdateAuthority,679);
-            methodBuffer.WriteU8(Convert.ToByte(primarySaleHappend),679+32);
+            writer.Write(newUpdateAuthority.KeyBytes);
+            writer.Write(primarySaleHappend);
 
-            return methodBuffer;
+            return buffer.ToArray();
         }
 
 
@@ -164,12 +197,12 @@ namespace Solnet.Metaplex
             int offset = 4;
             for (int i = 0; i < lenCreatorVector; i++)
             {
-                var creator = new Creator();
-                creator.key = creatorsVector.GetPubKey(offset);
-                creator.verified = Convert.ToBoolean( creatorsVector.GetU8(offset + 32) );
-                creator.share = creatorsVector.GetU32(offset + 32 + 1);
+                
+                PublicKey key = creatorsVector.GetPubKey(offset);
+                bool verified = Convert.ToBoolean( creatorsVector.GetU8(offset + 32) );
+                uint share = creatorsVector.GetU32(offset + 32 + 1);
                 offset = offset + 34;
-                creators.Add(creator);
+                creators.Add( new Creator( key, share , verified ));
             }
                 
             return creators;

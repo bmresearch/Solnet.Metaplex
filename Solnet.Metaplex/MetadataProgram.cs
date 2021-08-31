@@ -38,15 +38,19 @@ namespace Solnet.Metaplex
         /// <param name="mintKey"> Mint of token asset </param>
         /// <param name="authorityKey"> Mint authority </param>
         /// <param name="payerKey"> Transaction payer </param>
+        /// <param name="updateAuthority"> Metadata update authority </param>
         /// <param name="data"> Metadata struct with name,symbol,uri and optional list of creators </param>
+        /// <param name="updateAuthorityIsSigner"> Is the update authority a signer </param>
         /// <param name="isMutable"> Will the account stay mutable.</param>
         /// <returns>The transaction instruction.</returns> 
         public static TransactionInstruction CreateMetadataAccount (
             PublicKey metadataKey, 
             PublicKey mintKey, 
             PublicKey authorityKey, 
-            PublicKey payerKey, 
-            MetadataParameters data, 
+            PublicKey payerKey,
+            PublicKey updateAuthority, 
+            MetadataParameters data,
+            bool updateAuthorityIsSigner, 
             bool isMutable
         )
         {
@@ -57,6 +61,7 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly(mintKey, false),
                 AccountMeta.ReadOnly(authorityKey, true),
                 AccountMeta.ReadOnly(payerKey, true),
+                AccountMeta.ReadOnly(updateAuthority, updateAuthorityIsSigner ),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
@@ -130,9 +135,6 @@ namespace Solnet.Metaplex
             PublicKey metadataKey
         )
         {
-            byte[] data = new byte[1];
-            data.WriteU8((byte)MetadataProgramInstructions.Values.PuffMetadata, 0);
-
             return new TransactionInstruction()
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -140,8 +142,8 @@ namespace Solnet.Metaplex
                 {
                     AccountMeta.Writable( metadataKey , false )
                 },
-                Data = data
-            };
+                Data = new byte[] { (byte) MetadataProgramInstructions.Values.PuffMetadata } 
+        };
         }
 
     }
