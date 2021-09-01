@@ -150,58 +150,6 @@ namespace Solnet.Metaplex
             return buffer.ToArray();
         }
 
-
-        internal static void DecodeCreateMetadataAccountData( 
-            DecodedInstruction decodedInstruction, 
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys, 
-            byte[] keyIndices
-            )
-        {
-            decodedInstruction.Values.Add("metadataKey", keys[keyIndices[0]]);
-            decodedInstruction.Values.Add("mintKey", keys[keyIndices[1]]);
-            decodedInstruction.Values.Add("authorityKey", keys[keyIndices[2]]);
-            decodedInstruction.Values.Add("payerKey", keys[keyIndices[3]]);
-            decodedInstruction.Values.Add("ProgramIdKey", keys[keyIndices[4]]);
-            decodedInstruction.Values.Add("SysVarRentKey", keys[keyIndices[5]]);
-
-            var name = data.DecodeRustString(MetadataProgramLayout.nameOffset);
-            var symbol = data.DecodeRustString(MetadataProgramLayout.symbolOffset);
-            var uri = data.DecodeRustString(MetadataProgramLayout.uriOffset);
-
-            decodedInstruction.Values.Add("name", name.EncodedString );
-            decodedInstruction.Values.Add("symbol", symbol.EncodedString );
-            decodedInstruction.Values.Add("uri", uri.EncodedString );
-            decodedInstruction.Values.Add("selletFeeBasisPoints", MetadataProgramLayout.feeBasisOffset);
-
-            var creators = DecodeCreators(data.GetSpan(MetadataProgramLayout.creatorsOffset, 4 + 5 * 34));
-            decodedInstruction.Values.Add("creators", creators);
-
-            for (int i = 0; i < creators.Count; i++ ){
-                decodedInstruction.Values.Add("creator {i} key", creators[i].key.ToString());
-                decodedInstruction.Values.Add("creator {i} verified", creators[i].verified.ToString());
-                decodedInstruction.Values.Add("creator {i} share", creators[i].share.ToString());
-            }
-
-            decodedInstruction.Values.Add("isMutable", data.GetU8(679));
-
-        }
-
-        internal static IList<Creator> DecodeCreators ( ReadOnlySpan<byte> creatorsVector )
-        {
-            var creators = new List<Creator>();
-
-            //int lenCreatorVector = BinaryPrimitives.ReadUInt32LittleEndian(creatorsVector.Slice(0, sizeof(uint)));
-            uint lenCreatorVector = creatorsVector.GetU32(0);
-          
-            }
-
-            writer.Write(newUpdateAuthority.KeyBytes);
-            writer.Write(primarySaleHappend);
-
-            return buffer.ToArray();
-        }
-
         /// <summary>
         /// Make encodings for CreateMasterEdition instruction
         /// </summary> 
