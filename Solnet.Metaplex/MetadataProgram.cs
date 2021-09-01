@@ -146,5 +146,36 @@ namespace Solnet.Metaplex
         };
         }
 
+        public static TransactionInstruction CreateMasterEdition(
+            ulong? maxSupply,
+            PublicKey masterEditionKey,
+            PublicKey mintKey,
+            PublicKey updateAuthorityKey,
+            PublicKey mintAuthority,
+            PublicKey payer,
+            PublicKey metadataKey
+        )
+        {
+            List<AccountMeta> keys = new()
+            {
+                AccountMeta.Writable(masterEditionKey, false),
+                AccountMeta.Writable(mintKey, false),
+                AccountMeta.ReadOnly(updateAuthorityKey, true),
+                AccountMeta.ReadOnly(mintAuthority, true),
+                AccountMeta.ReadOnly(payer, true),
+                AccountMeta.ReadOnly(metadataKey, false),
+                AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
+                AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
+                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+            };
+
+            return new TransactionInstruction 
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = MetadataProgramData.EncodeCreateMasterEdition( maxSupply )
+            };
+        }
+
     }
 }

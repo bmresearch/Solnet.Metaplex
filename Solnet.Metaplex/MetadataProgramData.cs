@@ -150,6 +150,28 @@ namespace Solnet.Metaplex
             return buffer.ToArray();
         }
 
+        /// <summary>
+        /// Make encodings for CreateMasterEdition instruction
+        /// </summary> 
+        public static byte[] EncodeCreateMasterEdition( ulong? maxSupply )
+        {
+            var buffer = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(buffer);
+
+            writer.Write((byte)MetadataProgramInstructions.Values.CreateMasterEdition);
+
+            if ( maxSupply == null ){
+                writer.Write(new byte[] { 0 }); //Option<>
+            } else {
+                writer.Write((byte)1); //Option<u64>
+                writer.Write((ulong) maxSupply);
+            }
+
+            PrintByteArray(buffer.ToArray());
+
+            return buffer.ToArray();
+        }
+
 
         internal static void DecodeCreateMetadataAccountData( 
             DecodedInstruction decodedInstruction, 
