@@ -121,7 +121,8 @@ namespace Solnet.Metaplex.Test
             var mintAccount = wallet.GetAccount(223);
             var tokenAccount = wallet.GetAccount(334);
 
-            //PDA
+            //PDA METADATA
+
             byte[] metadataAddress = new byte[32];
             int nonce;
             AddressExtensions.TryFindProgramAddress(
@@ -135,8 +136,25 @@ namespace Solnet.Metaplex.Test
                 out nonce
             );
 
-            Console.WriteLine($"PDA: {new PublicKey(metadataAddress)}");
 
+            Console.WriteLine($"PDA METADATA: {new PublicKey(metadataAddress)}");
+
+            //PDA MASTER EDITION
+            byte[] masterEditionAddress = new byte[32];
+            //int nonce;
+            AddressExtensions.TryFindProgramAddress(
+                new List<byte[]>() {
+                    Encoding.UTF8.GetBytes("metadata"),
+                    MetadataProgram.ProgramIdKey,
+                    mintAccount.PublicKey,
+                    Encoding.UTF8.GetBytes("edition")
+                },
+                MetadataProgram.ProgramIdKey,
+                out masterEditionAddress,
+                out nonce
+            );
+            Console.WriteLine($"PDA MASTER: {new PublicKey(masterEditionAddress)}");
+            
             //CREATORS
 
             var c1 = new Creator( fromAccount.PublicKey, 50);
@@ -178,11 +196,22 @@ namespace Solnet.Metaplex.Test
                         new PublicKey(metadataAddress)
                     )
                 )
+                .AddInstruction (
+                    MetadataProgram.CreateMasterEdition(
+                        1,
+                        new PublicKey(masterEditionAddress),
+                        mintAccount.PublicKey,
+                        fromAccount.PublicKey,
+                        fromAccount.PublicKey,
+                        fromAccount.PublicKey,
+                        new PublicKey(metadataAddress)
+                    )
+                )
                 .Build(new List<Account> { fromAccount, wallet.GetAccount(101) });
 
             var txSim2 = rpcClient.SimulateTransaction(TX2);
 
-            Console.WriteLine($"Transaction: { txSim2.RawRpcResponse }");
+            Console.WriteLine($"Transaction sim: \n { txSim2.RawRpcResponse }");
 
         }
     }
