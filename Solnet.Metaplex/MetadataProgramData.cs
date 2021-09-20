@@ -11,15 +11,37 @@ using System.Text;
 namespace Solnet.Metaplex
 {
 
-
+    /// <summary>
+    /// Creator class.
+    /// </summary>
     public class Creator 
     {
+        /// <summary>
+        /// Creators public key.
+        /// </summary>
         public PublicKey key;
+
+        /// <summary>
+        ///  Did the creator sign?
+        /// </summary>
         public bool verified;
+
+        /// <summary>
+        /// Creators share in percentages.
+        /// </summary>
         public byte share;
 
+        /// <summary>
+        ///  Creator data byte lenght in an account data.
+        /// </summary>
         public static int length = 34;
 
+        /// <summary>
+        ///  Creator constructor.
+        /// </summary>
+        /// <param name="key"> Public key of the creator</param>
+        /// <param name="share"> Creators share in percentages</param>
+        /// <param name="verified"> Did the creator sign?</param>/
         public Creator( PublicKey key,  byte share , bool verified = false )
         {
             this.key = key;
@@ -27,12 +49,21 @@ namespace Solnet.Metaplex
             this.share = share;
         }
 
+        /// <summary>
+        ///  Construct a Creator from a byte array ( deserialize ).
+        /// </summary>
+        /// <param name="encoded"></param>
         public Creator( ReadOnlySpan<byte> encoded )
         {
             this.key = encoded.GetPubKey(0);
             bool verified = Convert.ToBoolean( encoded.GetU8(32) );
             uint share = encoded.GetU8(33);
         }
+
+        /// <summary>
+        ///  Encode Creators data ( serialize ).
+        /// </summary>
+        /// <returns></returns>
         public byte[] Encode() 
         {
             byte[] encodedBuffer = new byte[34];

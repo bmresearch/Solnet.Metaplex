@@ -146,6 +146,18 @@ namespace Solnet.Metaplex
         };
         }
 
+
+        /// <summary>
+        ///  Create MasterEdition PDA.
+        /// </summary>
+        /// <param name="maxSupply"></param>
+        /// <param name="masterEditionKey"></param>
+        /// <param name="mintKey"></param>
+        /// <param name="updateAuthorityKey"></param>
+        /// <param name="mintAuthority"></param>
+        /// <param name="payer"></param>
+        /// <param name="metadataKey"></param>
+        /// <returns> Transaction instruction. </returns>/
         public static TransactionInstruction CreateMasterEdition(
             ulong? maxSupply,
             PublicKey masterEditionKey,
