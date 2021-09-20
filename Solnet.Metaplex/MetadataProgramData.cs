@@ -386,6 +386,18 @@ namespace Solnet.Metaplex
         {
             decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
         }
+
+        internal static void DecodeUpdatePrimarySaleHappendViaToken(
+            DecodedInstruction decodedInstruction,
+            ReadOnlySpan<byte> data,
+            IList<PublicKey> keys,
+            byte[] keyIndices
+            )
+        {
+            decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("owner key", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("token account key", keys[keyIndices[2]]);
+        }
         
     }
 }
