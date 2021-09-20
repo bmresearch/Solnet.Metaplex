@@ -176,5 +176,44 @@ namespace Solnet.Metaplex
                 Data = MetadataProgramData.EncodeCreateMasterEdition( maxSupply )
             };
         }
-    }
-}
+
+        /// <summary>
+        /// Decodes an instruction created by the Metadata Program.
+        /// </summary>
+        /// <param name="data">The instruction data to decode.</param>
+        /// <param name="keys">The account keys present in the transaction.</param>
+        /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
+        /// <returns>A decoded instruction.</returns>
+        public static DecodedInstruction Decode( ReadOnlySpan<byte> data , IList<PublicKey> keys , byte[] keyIndices )
+        {
+            uint instruction = data.GetU8(MetadataProgramData.MethodOffset);
+            MetadataProgramInstructions.Values instructionValue =
+                (MetadataProgramInstructions.Values)Enum.Parse(typeof(MetadataProgramInstructions.Values), instruction.ToString());
+
+            DecodedInstruction decodedInstruction = new()
+            {
+                PublicKey = ProgramIdKey,
+                InstructionName = MetadataProgramInstructions.Names[instructionValue],
+                ProgramName = ProgramName,
+                Values = new Dictionary<string, object>(),
+                InnerInstructions = new List<DecodedInstruction>()
+            };
+
+            switch (instructionValue)
+            {
+                case MetadataProgramInstructions.Values.CreateMetadataAccount:
+                    MetadataProgramData.DecodeCreateMetadataAccountData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case MetadataProgramInstructions.Values.UpdateMetadataAccount:
+                    MetadataProgramData.DecodeUpdateMetadataAccountData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case MetadataProgramInstructions.Values.CreateMasterEdition:
+                MetadataProgramData.DecodeCreateMasterEdition(decodedInstruction, data, keys, keyIndices);
+                break;
+            }
+
+            return decodedInstruction;
+        }
+
+    } //class
+} //namespace
