@@ -208,8 +208,14 @@ namespace Solnet.Metaplex
                     MetadataProgramData.DecodeUpdateMetadataAccountData(decodedInstruction, data, keys, keyIndices);
                     break;
                 case MetadataProgramInstructions.Values.CreateMasterEdition:
-                MetadataProgramData.DecodeCreateMasterEdition(decodedInstruction, data, keys, keyIndices);
-                break;
+                    MetadataProgramData.DecodeCreateMasterEdition(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case MetadataProgramInstructions.Values.PuffMetadata:
+                    MetadataProgramData.DecodePuffMetada(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case MetadataProgramInstructions.Values.SignMetadata:
+                    MetadataProgramData.DecodeSignMetada(decodedInstruction, data, keys, keyIndices);
+                    break;
             }
 
             return decodedInstruction;
