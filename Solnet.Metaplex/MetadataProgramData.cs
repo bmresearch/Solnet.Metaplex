@@ -16,13 +16,22 @@ namespace Solnet.Metaplex
     {
         public PublicKey key;
         public bool verified;
-        public uint share;
+        public byte share;
 
-        public Creator( PublicKey key,  uint share , bool verified = false )
+        public static int length = 34;
+
+        public Creator( PublicKey key,  byte share , bool verified = false )
         {
             this.key = key;
             this.verified = verified;
             this.share = share;
+        }
+
+        public Creator( ReadOnlySpan<byte> encoded )
+        {
+            this.key = encoded.GetPubKey(0);
+            bool verified = Convert.ToBoolean( encoded.GetU8(32) );
+            uint share = encoded.GetU8(33);
         }
         public byte[] Encode() 
         {
@@ -47,7 +56,7 @@ namespace Solnet.Metaplex
         /// <summary>  Uri. Max 100 bytes. </summary>
         public string uri;
         /// <summary>  Seller fee basis points for secondary sales. </summary>
-        public int sellerFeeBasisPoints;
+        public uint sellerFeeBasisPoints;
         /// <summary>  List of creators. </summary>
         public List<Creator> creators;
     }
@@ -93,9 +102,11 @@ namespace Solnet.Metaplex
             writer.Write( encodedUri );
             writer.Write( (ushort) parameters.sellerFeeBasisPoints);
 
-            if ( parameters.creators == null || parameters.creators?.Count < 1 ){
+            if ( parameters.creators == null || parameters.creators?.Count < 1 )
+            {
                 writer.Write(new byte[] { 0 }); //Option()
-            } else {
+            } else 
+            {
                 writer.Write((byte)1);
                 writer.Write( parameters.creators.Count );
                 foreach ( Creator c in parameters.creators )
@@ -180,33 +191,43 @@ namespace Solnet.Metaplex
             byte[] keyIndices
             )
         {
+            int offset = 0;
+
             decodedInstruction.Values.Add("metadataKey", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("mintKey", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("authorityKey", keys[keyIndices[2]]);
             decodedInstruction.Values.Add("payerKey", keys[keyIndices[3]]);
-            decodedInstruction.Values.Add("ProgramIdKey", keys[keyIndices[4]]);
-            decodedInstruction.Values.Add("SysVarRentKey", keys[keyIndices[5]]);
+            decodedInstruction.Values.Add("updateAuthorityKey", keys[keyIndices[4]]);
+            decodedInstruction.Values.Add("SysProgramId", keys[keyIndices[5]]);
+            decodedInstruction.Values.Add("SysVarRentKey", keys[keyIndices[6]]);
+            
+            (string name , int nameLength)  = data.DecodeRustString(1);
+            (string symbol, int symbolLength) = data.DecodeRustString(1 + nameLength);
+            (string uri, int uriLength) = data.DecodeRustString(1 + nameLength+symbolLength);
+            int sellerFeeBasisPoints = data.GetU16(1 + nameLength + symbolLength + uriLength);
+            
+            decodedInstruction.Values.Add("name", name );
+            decodedInstruction.Values.Add("symbol", symbol );
+            decodedInstruction.Values.Add("uri", uri );
+            decodedInstruction.Values.Add("sellerFeeBasisPoints", sellerFeeBasisPoints );
 
-            var name = data.DecodeRustString(MetadataProgramLayout.nameOffset);
-            var symbol = data.DecodeRustString(MetadataProgramLayout.symbolOffset);
-            var uri = data.DecodeRustString(MetadataProgramLayout.uriOffset);
+            offset = 1 + nameLength + symbolLength + uriLength + 2;
 
-            decodedInstruction.Values.Add("name", name.EncodedString );
-            decodedInstruction.Values.Add("symbol", symbol.EncodedString );
-            decodedInstruction.Values.Add("uri", uri.EncodedString );
-            decodedInstruction.Values.Add("selletFeeBasisPoints", MetadataProgramLayout.feeBasisOffset);
-
-            var creators = DecodeCreators(data.GetSpan(MetadataProgramLayout.creatorsOffset, 4 + 5 * 34));
-            decodedInstruction.Values.Add("creators", creators);
-
-            for (int i = 0; i < creators.Count; i++ ){
-                decodedInstruction.Values.Add("creator {i} key", creators[i].key.ToString());
-                decodedInstruction.Values.Add("creator {i} verified", creators[i].verified.ToString());
-                decodedInstruction.Values.Add("creator {i} share", creators[i].share.ToString());
+            if ( data.GetS8( offset)  == 0)
+            {
+                offset++;
+            } else
+            {
+                offset++;
+                int numOfCreators = data.GetS32(offset);
+                offset = offset + 4;
+                var creators = DecodeCreators(data.GetSpan( offset , numOfCreators * Creator.length));
+                decodedInstruction.Values.Add("creators", creators);
+                offset = offset + numOfCreators * Creator.length;
             }
 
-            decodedInstruction.Values.Add("isMutable", data.GetU8(679));
-
+            decodedInstruction.Values.Add("isMutable", data.GetU8( data.Length-1 ));
+            
         }
 
         internal static IList<Creator> DecodeCreators ( ReadOnlySpan<byte> creatorsVector )
@@ -214,17 +235,14 @@ namespace Solnet.Metaplex
             var creators = new List<Creator>();
 
             //int lenCreatorVector = BinaryPrimitives.ReadUInt32LittleEndian(creatorsVector.Slice(0, sizeof(uint)));
-            uint lenCreatorVector = creatorsVector.GetU32(0);
+            int lenCreatorVector = creatorsVector.Length / Creator.length;
 
-            int offset = 4;
+            int offset = 0;
             for (int i = 0; i < lenCreatorVector; i++)
-            {
-                
-                PublicKey key = creatorsVector.GetPubKey(offset);
-                bool verified = Convert.ToBoolean( creatorsVector.GetU8(offset + 32) );
-                uint share = creatorsVector.GetU32(offset + 32 + 1);
-                offset = offset + 34;
-                creators.Add( new Creator( key, share , verified ));
+            {             
+                var c = new Creator(creatorsVector.GetSpan(offset, Creator.length));
+                offset = offset + Creator.length;
+                creators.Add(c);
             }
                 
             return creators;
@@ -237,31 +255,105 @@ namespace Solnet.Metaplex
             byte[] keyIndices
             )
         {
-            decodedInstruction.Values.Add("metadataKey", keys[keyIndices[0]]);
-            decodedInstruction.Values.Add("updateAuthority", keys[keyIndices[1]]);
-            decodedInstruction.Values.Add("newUpdateAuthority", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("update authority key", keys[keyIndices[1]]);
 
-            var name = data.DecodeRustString(MetadataProgramLayout.nameOffset);
-            var symbol = data.DecodeRustString(MetadataProgramLayout.symbolOffset);
-            var uri = data.DecodeRustString(MetadataProgramLayout.uriOffset);
+            int offset = 1;
 
-            decodedInstruction.Values.Add("name", name.EncodedString );
-            decodedInstruction.Values.Add("symbol", symbol.EncodedString );
-            decodedInstruction.Values.Add("uri", uri.EncodedString );
-            decodedInstruction.Values.Add("selletFeeBasisPoints", MetadataProgramLayout.feeBasisOffset);
+            // Option <data>
+            if ( data.GetU8(offset) == 1 )
+            {
+                offset++;
+                (string name , int nameLength)  = data.DecodeRustString(offset);
+                (string symbol, int symbolLength) = data.DecodeRustString(offset+nameLength);
+                (string uri, int uriLength) = data.DecodeRustString(offset+nameLength+symbolLength);
+                int sellerFeeBasisPoints = data.GetU16(offset + nameLength + symbolLength + uriLength);
 
-            var creators = DecodeCreators(data.GetSpan(MetadataProgramLayout.creatorsOffset, 4 + 5 * 34));
-            decodedInstruction.Values.Add("creators", creators);
+                decodedInstruction.Values.Add("name", name );
+                decodedInstruction.Values.Add("symbol", symbol );
+                decodedInstruction.Values.Add("uri", uri );
+                decodedInstruction.Values.Add("selletFeeBasisPoints", sellerFeeBasisPoints );
 
-            for (int i = 0; i < creators.Count; i++ ){
-                decodedInstruction.Values.Add("creator {i} key", creators[i].key.ToString());
-                decodedInstruction.Values.Add("creator {i} verified", creators[i].verified.ToString());
-                decodedInstruction.Values.Add("creator {i} share", creators[i].share.ToString());
+                offset = offset + nameLength + symbolLength + uriLength + 2;
+
+                //Option<Creators>
+                if ( data.GetS8( offset)  == 0)
+                {
+                    offset++;
+                } else
+                {
+                    offset++;
+                    int numOfCreators = data.GetS32(offset);
+                    offset = offset + 4;
+                    var creators = DecodeCreators(data.GetSpan( offset , numOfCreators * Creator.length));
+                    decodedInstruction.Values.Add("creators", creators);
+                    offset = offset + numOfCreators * Creator.length;
+                }
+            } else {
+                offset++;
             }
+            // Option<PubKey>
+            if (data.GetU8(offset) == 1)
+            {
+                offset++;
+                decodedInstruction.Values.Add("newUpdateAuthority", data.GetPubKey(offset));
+            } else 
+            {
+                offset++;
+            }
+            // Option<bool>
+            if (data.GetU8(offset) == 1)
+            {
+                offset++;
+                decodedInstruction.Values.Add("primarySaleHappend", data.GetU8(offset));
+            } 
+        }
 
-            decodedInstruction.Values.Add("newUpdateAuthority", data.GetPubKey(679));
-            decodedInstruction.Values.Add("primarySaleHappend", data.GetU8(679 + 32));
+        internal static void DecodeCreateMasterEdition(
+            DecodedInstruction decodedInstruction,
+            ReadOnlySpan<byte> data,
+            IList<PublicKey> keys,
+            byte[] keyIndices
+            )
+        {
+            decodedInstruction.Values.Add("master edition key", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("mint key", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("update authority key", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("mint authority key", keys[keyIndices[3]]);
+            decodedInstruction.Values.Add("payer", keys[keyIndices[4]]);
+            decodedInstruction.Values.Add("metadata key", keys[keyIndices[5]]);
+            decodedInstruction.Values.Add("token program key", keys[keyIndices[6]]);
+            decodedInstruction.Values.Add("system program key", keys[keyIndices[7]]);
+            decodedInstruction.Values.Add("system program rent key", keys[keyIndices[8]]);
 
+            if ( data.GetU8(0) == 0 )
+            {
+                return;
+            } else 
+            {
+                decodedInstruction.Values.Add("max supply", data.GetU64(1));
+            }
+        }
+
+        internal static void DecodeSignMetada(
+            DecodedInstruction decodedInstruction,
+            ReadOnlySpan<byte> data,
+            IList<PublicKey> keys,
+            byte[] keyIndices
+            )
+        {
+            decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("creator key", keys[keyIndices[1]]);
+        }
+
+        internal static void DecodePuffMetada(
+            DecodedInstruction decodedInstruction,
+            ReadOnlySpan<byte> data,
+            IList<PublicKey> keys,
+            byte[] keyIndices
+            )
+        {
+            decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
         }
         
     }

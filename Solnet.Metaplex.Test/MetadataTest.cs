@@ -4,11 +4,13 @@ using Solnet.Programs;
 using Solnet.Rpc;
 using Solnet.Rpc.Builders;
 using Solnet.Rpc.Utilities;
+using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using Solnet.Wallet.Bip39;
 using System.Collections.Generic;
 using System.Text;
 using System;
+using System.Threading;
 
 using Solnet.Examples;
 using Solnet.Metaplex;
@@ -23,6 +25,17 @@ namespace Solnet.Metaplex.Test
     {
 
         private string MnemonicWords = "volcano denial gloom bid lounge answer gas prevent deer magnet enrich message divide page slab category outer idle foster journey panel furnace brand leave";
+        public static void PrintByteArray(byte[] bytes)
+        {
+            var sb = new StringBuilder("\nnew byte[] { ");
+            foreach (var b in bytes)
+            {
+                sb.Append(b + ", ");
+            }
+            sb.Append("}\n");
+            Console.WriteLine(sb.ToString());
+        }
+        
         //[TestMethod]
         public void MintToken()
         {
@@ -109,7 +122,7 @@ namespace Solnet.Metaplex.Test
 
         }
     
-        [TestMethod]
+        //[TestMethod]
         public void TestCreateMetadataAccount()
         {
             var rpcClient = ClientFactory.GetClient(Cluster.DevNet); //, logger);
@@ -170,7 +183,7 @@ namespace Solnet.Metaplex.Test
                 sellerFeeBasisPoints = 77
             };
 
-            byte[] TX2 = new TransactionBuilder()
+            var TX2 = new TransactionBuilder()
                 .SetRecentBlockHash(blockHash.Result.Value.Blockhash)
                 .SetFeePayer(fromAccount)
                 .AddInstruction(
@@ -179,7 +192,7 @@ namespace Solnet.Metaplex.Test
                         mintAccount.PublicKey,  //MINT
                         fromAccount.PublicKey,  //mint AUTHORITY
                         fromAccount.PublicKey,  //PAYER
-                        fromAccount.PublicKey,
+                        fromAccount.PublicKey,  //update Authority 
                         data,                   //DATA
                         true,
                         true                    //ISMUTABLE
@@ -196,7 +209,7 @@ namespace Solnet.Metaplex.Test
                         new PublicKey(metadataAddress)
                     )
                 )
-                .AddInstruction (
+                .AddInstruction(
                     MetadataProgram.CreateMasterEdition(
                         1,
                         new PublicKey(masterEditionAddress),
@@ -207,12 +220,48 @@ namespace Solnet.Metaplex.Test
                         new PublicKey(metadataAddress)
                     )
                 )
-                .Build(new List<Account> { fromAccount, wallet.GetAccount(101) });
+            .Build(new List<Account> { fromAccount, wallet.GetAccount(101) });
 
-            var txSim2 = rpcClient.SimulateTransaction(TX2);
+            //var txSim2 = rpcClient.SimulateTransaction(TX2);
 
-            Console.WriteLine($"Transaction sim: \n { txSim2.RawRpcResponse }");
+            //InstructionDecoder.Register(MetadataProgram.ProgramIdKey, MetadataProgram.Decode);
+            //List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions( TX2 );
 
+            //Console.WriteLine($"Transaction sim: \n { txSim2.RawRpcResponse }");
+
+        }
+
+        [TestMethod]
+        public void TestGetAndDecodeMessage() 
+        {
+            var client = Solnet.Rpc.ClientFactory.GetClient(Solnet.Rpc.Cluster.MainNet);
+            var res = client.GetConfirmedTransaction("3tpv4udpeQ9NZhCXRkVdPz7aJqqakLPurFTLtTR6Z7UEo9gtr7UCu9rLgFEfizYwB8sQHci9CTJdZex7qSsUr2EV");
+
+
+            //Thread.Sleep(3000);
+            InstructionDecoder.Register(MetadataProgram.ProgramIdKey, MetadataProgram.Decode);
+            List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions(res.Result);
+
+            foreach ( DecodedInstruction di in decodedInstructions )
+            {
+                Console.WriteLine("\n Instruction: " + di.InstructionName);
+                Console.WriteLine("Program: " + di.ProgramName );
+
+
+                foreach ( KeyValuePair<string,object> kv in di.Values)
+                {
+                Console.WriteLine("\t" + kv.Key + ": " + kv.Value.ToString());
+                if ( kv.Value is List<Creator> )
+                {
+                    foreach ( Creator c in (List<Creator>) kv.Value )
+                    {
+                        Console.WriteLine( "\t\tCreator Key : " + c.key.ToString());
+                        Console.WriteLine( "\t\tCreator Share : " + c.share.ToString());
+                        Console.WriteLine( "\t\tCreator Verified : " + c.verified.ToString());
+                    }
+                }
+                }
+            }
         }
     }
 }
