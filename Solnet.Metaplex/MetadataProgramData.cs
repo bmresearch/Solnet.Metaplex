@@ -209,7 +209,18 @@ namespace Solnet.Metaplex
                 writer.Write((ulong) maxSupply);
             }
 
-            PrintByteArray(buffer.ToArray());
+            //PrintByteArray(buffer.ToArray());
+
+            return buffer.ToArray();
+        }
+
+        public static byte[] EncodeMintNewEditionFromMasterEditionViaToken ( ulong edition ) //u64
+        {
+            var buffer = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(buffer);
+
+            writer.Write((byte)MetadataProgramInstructions.Values.MintNewEditionFromMasterEditionViaToken);
+            writer.Write(edition);
 
             return buffer.ToArray();
         }
@@ -397,6 +408,32 @@ namespace Solnet.Metaplex
             decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("owner key", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("token account key", keys[keyIndices[2]]);
+        }
+        
+        internal static void DecodeMintNewEditionFromMasterEditionViaToken(
+            DecodedInstruction decodedInstruction,
+            ReadOnlySpan<byte> data,
+            IList<PublicKey> keys,
+            byte[] keyIndices
+            )
+        {
+            decodedInstruction.Values.Add("new metadata key", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("new edition", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("master edition", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("new mint", keys[keyIndices[3]]);
+            decodedInstruction.Values.Add("edition PDA", keys[keyIndices[4]]);
+            decodedInstruction.Values.Add("new mint authority", keys[keyIndices[5]]);
+            decodedInstruction.Values.Add("payer", keys[keyIndices[6]]);
+            decodedInstruction.Values.Add("token account owner", keys[keyIndices[7]]);
+            decodedInstruction.Values.Add("token account", keys[keyIndices[8]]);
+            decodedInstruction.Values.Add("update authority", keys[keyIndices[8]]);
+            decodedInstruction.Values.Add("master edition", keys[keyIndices[9]]);
+            decodedInstruction.Values.Add("metadata key", keys[keyIndices[10]]);
+            decodedInstruction.Values.Add("token program id", keys[keyIndices[11]]);
+            decodedInstruction.Values.Add("system program id", keys[keyIndices[12]]);
+            decodedInstruction.Values.Add("system program rent", keys[keyIndices[13]]);
+
+            decodedInstruction.Values.Add("edition number", data.GetU64(1));
         }
         
     }
