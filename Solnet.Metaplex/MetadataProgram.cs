@@ -143,9 +143,50 @@ namespace Solnet.Metaplex
                     AccountMeta.Writable( metadataKey , false )
                 },
                 Data = new byte[] { (byte) MetadataProgramInstructions.Values.PuffMetadata } 
-        };
+            };
         }
 
+        /// <summary>
+        ///  Allows updating the primary sale boolean on Metadata solely through owning an account
+        /// containing a token from the metadata's mint and being a signer on this transaction.
+        /// A sort of limited authority for limited update capability that is required for things like
+        /// Metaplex to work without needing full authority passing.
+        /// </summary>
+        /// <param name="metadataKey"> Metadata key (pda of ['metadata', program id, mint id]) </param>
+        /// <param name="owner"> Owner on the token account </param>
+        /// <param name="tokenAccount">  Account containing tokens from the metadata's mint </param>
+        /// <returns></returns>
+        public static TransactionInstruction UpdatePrimarySaleHappendViaToken(
+            PublicKey metadataKey,
+            PublicKey owner,
+            PublicKey tokenAccount
+        )
+        {
+            return new TransactionInstruction()
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = new List<AccountMeta>()
+                {
+                    AccountMeta.Writable( metadataKey, false ),
+                    AccountMeta.ReadOnly( owner, true ),
+                    AccountMeta.ReadOnly( tokenAccount, false )
+                },
+                Data = new byte[] { (byte)MetadataProgramInstructions.Values.UpdatePrimarySaleHappenedViaToken }
+            };
+        }
+
+
+        /// <summary>
+        ///  Create MasterEdition PDA.
+        /// </summary>
+        /// <param name="maxSupply"></param>
+        /// <param name="masterEditionKey"> PDA of [ 'metadata', program id, mint, 'edition' ]</param>
+        /// <param name="mintKey"></param>
+        /// <param name="updateAuthorityKey"> </param>
+        /// <param name="mintAuthority"> Mint authority on the metadata's mint - THIS WILL TRANSFER AUTHORITY AWAY FROM THIS KEY </param>
+        /// <param name="payer"></param>
+        /// <param name="metadataKey"></param>
+        /// <returns> Transaction instruction. </returns>/
         public static TransactionInstruction CreateMasterEdition(
             ulong? maxSupply,
             PublicKey masterEditionKey,
@@ -215,6 +256,9 @@ namespace Solnet.Metaplex
                     break;
                 case MetadataProgramInstructions.Values.SignMetadata:
                     MetadataProgramData.DecodeSignMetada(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case MetadataProgramInstructions.Values.UpdatePrimarySaleHappenedViaToken:
+                    MetadataProgramData.DecodeUpdatePrimarySaleHappendViaToken(decodedInstruction, data, keys, keyIndices);
                     break;
             }
 
