@@ -1,10 +1,13 @@
 using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
+using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
 using Solnet.Wallet.Utilities;
 using Solnet.Programs;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Buffers.Binary;
 using System.Linq;
 
 namespace Solnet.Metaplex
@@ -43,14 +46,14 @@ namespace Solnet.Metaplex
         /// <param name="updateAuthorityIsSigner"> Is the update authority a signer </param>
         /// <param name="isMutable"> Will the account stay mutable.</param>
         /// <returns>The transaction instruction.</returns> 
-        public static TransactionInstruction CreateMetadataAccount (
-            PublicKey metadataKey, 
-            PublicKey mintKey, 
-            PublicKey authorityKey, 
+        public static TransactionInstruction CreateMetadataAccount(
+            PublicKey metadataKey,
+            PublicKey mintKey,
+            PublicKey authorityKey,
             PublicKey payerKey,
-            PublicKey updateAuthority, 
+            PublicKey updateAuthority,
             MetadataParameters data,
-            bool updateAuthorityIsSigner, 
+            bool updateAuthorityIsSigner,
             bool isMutable
         )
         {
@@ -61,7 +64,7 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly(mintKey, false),
                 AccountMeta.ReadOnly(authorityKey, true),
                 AccountMeta.ReadOnly(payerKey, true),
-                AccountMeta.ReadOnly(updateAuthority, updateAuthorityIsSigner ),
+                AccountMeta.ReadOnly(updateAuthority, updateAuthorityIsSigner),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
@@ -71,14 +74,14 @@ namespace Solnet.Metaplex
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = MetadataProgramData.EncodeCreateMetadataAccountData( data , isMutable )
+                Data = MetadataProgramData.EncodeCreateMetadataAccountData(data, isMutable)
             };
         }
 
         ///<summary>
         /// Update metadata account.
         ///</summary>
-        public static TransactionInstruction UpdateMetadataAccount (
+        public static TransactionInstruction UpdateMetadataAccount(
             PublicKey metadataKey,
             PublicKey updateAuthority,
             PublicKey newUpdateAuthority,
@@ -92,11 +95,11 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly(updateAuthority, true)
             };
 
-            return new TransactionInstruction 
+            return new TransactionInstruction
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = MetadataProgramData.EncodeUpdateMetadataData( data, newUpdateAuthority, primarySaleHappend )
+                Data = MetadataProgramData.EncodeUpdateMetadataData(data, newUpdateAuthority, primarySaleHappend)
             };
         }
 
@@ -106,7 +109,7 @@ namespace Solnet.Metaplex
         /// <param name="metadataKey"> PDA of ('metadata', program id, mint id) </param>
         /// <param name="creatorKey"> Creator key </param>
         /// <returns></returns>
-        public static TransactionInstruction SignMetada (
+        public static TransactionInstruction SignMetada(
             PublicKey metadataKey,
             PublicKey creatorKey
         )
@@ -117,7 +120,7 @@ namespace Solnet.Metaplex
             return new TransactionInstruction()
             {
                 ProgramId = ProgramIdKey.KeyBytes,
-                Keys = new List<AccountMeta>() 
+                Keys = new List<AccountMeta>()
                 {
                     AccountMeta.Writable( metadataKey , false),
                     AccountMeta.ReadOnly( creatorKey, true)
@@ -142,7 +145,7 @@ namespace Solnet.Metaplex
                 {
                     AccountMeta.Writable( metadataKey , false )
                 },
-                Data = new byte[] { (byte) MetadataProgramInstructions.Values.PuffMetadata } 
+                Data = new byte[] { (byte)MetadataProgramInstructions.Values.PuffMetadata }
             };
         }
 
@@ -210,11 +213,76 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
             };
 
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = MetadataProgramData.EncodeCreateMasterEdition(maxSupply)
+            };
+        }
+
+        public static TransactionInstruction MintNewEditionFromMasterEditionViaToken(
+            uint edition,
+            PublicKey newMetadataKey,
+            PublicKey newEdition,
+            PublicKey masterEdition,
+            PublicKey newMint,
+            PublicKey newMintAuthority,
+            PublicKey payer,
+            PublicKey tokenAccountOwner,
+            PublicKey tokenAccount,
+            PublicKey updateAuthority,
+            PublicKey newMetadataUpdateAuthority,
+            PublicKey metadataKey,
+            PublicKey metadataMint
+        )
+        {
+            int BIT_SIZE = 248;
+            int editionNumber = (int)Math.Floor((double)edition / BIT_SIZE);
+            //EDITION PDA
+            byte[] editionPda = new byte[32];
+            int nonce;
+            AddressExtensions.TryFindProgramAddress(
+                new List<byte[]>() {
+                    Encoding.UTF8.GetBytes("metadata"),
+                    MetadataProgram.ProgramIdKey,
+                    metadataMint,
+                    Encoding.UTF8.GetBytes("edition"),
+                    Encoding.UTF8.GetBytes(editionNumber.ToString())
+                },
+                MetadataProgram.ProgramIdKey,
+                out editionPda,
+                out nonce
+            );
+
+            List<AccountMeta> keys = new()
+            {
+                AccountMeta.Writable(newMetadataKey, false),
+                AccountMeta.Writable(newEdition, false),
+                AccountMeta.Writable(masterEdition, false),
+                AccountMeta.Writable(newMint, false),
+                AccountMeta.Writable(new PublicKey(editionPda), false),
+
+                AccountMeta.ReadOnly(newMintAuthority, true),
+                AccountMeta.ReadOnly(payer, true),
+                AccountMeta.ReadOnly(tokenAccountOwner, true),
+
+                AccountMeta.ReadOnly(tokenAccount, false),
+                AccountMeta.ReadOnly(updateAuthority, false),
+                AccountMeta.ReadOnly(metadataKey, false),
+
+                AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
+                AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
+                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+            };
+
+
+
             return new TransactionInstruction 
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = MetadataProgramData.EncodeCreateMasterEdition( maxSupply )
+                Data = MetadataProgramData.EncodeMintNewEditionFromMasterEditionViaToken( edition )
             };
         }
 
@@ -259,6 +327,9 @@ namespace Solnet.Metaplex
                     break;
                 case MetadataProgramInstructions.Values.UpdatePrimarySaleHappenedViaToken:
                     MetadataProgramData.DecodeUpdatePrimarySaleHappendViaToken(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case MetadataProgramInstructions.Values.MintNewEditionFromMasterEditionViaToken:
+                    MetadataProgramData.DecodeMintNewEditionFromMasterEditionViaToken(decodedInstruction, data, keys, keyIndices);
                     break;
             }
 
