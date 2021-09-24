@@ -135,10 +135,10 @@ namespace Solnet.Metaplex
 
             if ( parameters.creators == null || parameters.creators?.Count < 1 )
             {
-                writer.Write(new byte[] { 0 }); //Option()
+                writer.Write( (byte) 0); //Option()
             } else 
             {
-                writer.Write((byte)1);
+                writer.Write( (byte) 1);
                 writer.Write( parameters.creators.Count );
                 foreach ( Creator c in parameters.creators )
                 {
@@ -174,10 +174,12 @@ namespace Solnet.Metaplex
             writer.Write( encodedUri );
             writer.Write( (ushort) parameters.sellerFeeBasisPoints);
 
-            if ( parameters.creators == null || parameters.creators?.Count < 1 ){
-                writer.Write(new byte[] { 0 }); //Option()
-            } else {
-                writer.Write((byte)1);
+            if ( parameters.creators == null || parameters.creators?.Count < 1 )
+            {
+                writer.Write( (byte)0 ); //Option()
+            } else 
+            {
+                writer.Write( (byte)1 );
                 writer.Write( parameters.creators.Count );
                 foreach ( Creator c in parameters.creators )
                 {
