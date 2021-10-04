@@ -86,7 +86,7 @@ namespace Solnet.Metaplex
             PublicKey updateAuthority,
             PublicKey newUpdateAuthority,
             MetadataParameters data,
-            bool primarySaleHappend
+            bool? primarySaleHappend
         )
         {
             List<AccountMeta> keys = new()
