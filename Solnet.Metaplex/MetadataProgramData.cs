@@ -78,7 +78,7 @@ namespace Solnet.Metaplex
     /// <summary>
     /// Metadata parameters for instructions
     /// </summary>
-    public struct MetadataParameters 
+    public class MetadataParameters 
     {
         /// <summary>  Name or discription. Max 32 bytes. </summary>
         public string name;
@@ -156,41 +156,68 @@ namespace Solnet.Metaplex
         /// Make encodings for UpdateMetadata instruction
         /// </summary>        
         internal static byte[] EncodeUpdateMetadataData (
-            MetadataParameters parameters, 
-            PublicKey newUpdateAuthority, 
-            bool primarySaleHappend
+            MetadataParameters parameters = null, 
+            PublicKey newUpdateAuthority = null , 
+            bool? primarySaleHappend = null
         )
         {
-            byte[] encodedName = Serialization.EncodeRustString(parameters.name);
-            byte[] encodedSymbol = Serialization.EncodeRustString(parameters.symbol);
-            byte[] encodedUri = Serialization.EncodeRustString(parameters.uri);
-
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) MetadataProgramInstructions.Values.CreateMetadataAccount );
-            writer.Write( encodedName) ;
-            writer.Write( encodedSymbol );
-            writer.Write( encodedUri );
-            writer.Write( (ushort) parameters.sellerFeeBasisPoints);
+            writer.Write( (byte) MetadataProgramInstructions.Values.UpdateMetadataAccount );
 
-            if ( parameters.creators == null || parameters.creators?.Count < 1 )
+            if ( parameters is not null )
             {
-                writer.Write( (byte)0 ); //Option()
-            } else 
-            {
-                writer.Write( (byte)1 );
-                writer.Write( parameters.creators.Count );
-                foreach ( Creator c in parameters.creators )
+                writer.Write((byte)1);
+
+                byte[] encodedName = Serialization.EncodeRustString(parameters.name);
+                byte[] encodedSymbol = Serialization.EncodeRustString(parameters.symbol);
+                byte[] encodedUri = Serialization.EncodeRustString(parameters.uri);
+
+                writer.Write( encodedName) ;
+                writer.Write( encodedSymbol );
+                writer.Write( encodedUri );
+                writer.Write( (ushort) parameters.sellerFeeBasisPoints);
+
+                if ( parameters.creators == null || parameters.creators?.Count < 1 )
                 {
-                    byte[] encodedCreator = c.Encode();
-                    writer.Write( encodedCreator );
+                    writer.Write( (byte)0 ); //Option()
+                } else 
+                {
+                    writer.Write( (byte)1 );
+                    writer.Write( parameters.creators.Count );
+                    foreach ( Creator c in parameters.creators )
+                    {
+                        byte[] encodedCreator = c.Encode();
+                        writer.Write( encodedCreator );
+                    }
                 }
+            }else
+            {
+                writer.Write((byte)0);
             }
+           
 
-            writer.Write(newUpdateAuthority.KeyBytes);
-            writer.Write(primarySaleHappend);
-
+            if ( newUpdateAuthority is not null )
+            {
+                writer.Write((byte)1);
+                writer.Write(newUpdateAuthority.KeyBytes.AsSpan()); 
+            } 
+            else
+            {
+                writer.Write((byte)0);
+            } 
+            
+            if ( primarySaleHappend is not null )
+            {
+                writer.Write((byte)1);
+                writer.Write(primarySaleHappend.Value);
+            } 
+            else
+            {
+                writer.Write((byte)0);
+            }         
+            
             return buffer.ToArray();
         }
 
