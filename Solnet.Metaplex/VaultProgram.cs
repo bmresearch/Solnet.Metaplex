@@ -86,6 +86,5 @@ namespace Solnet.Metaplex
                 Data = VaultProgramData.EncodeAddTokenToInactiveVault( amount )
             };
         }
-
     }
 }
