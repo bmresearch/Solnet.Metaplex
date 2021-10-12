@@ -29,6 +29,7 @@ namespace Solnet.Metaplex
         public string Image = "image";
         public string VR = "vr";
         public string HTML = "html";
+        public string Document = "document";
     }
 
     public struct MetadataFile
