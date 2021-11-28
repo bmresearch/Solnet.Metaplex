@@ -94,7 +94,7 @@ namespace Solnet.Metaplex
                 (string name,_) = binData.DecodeRustString( MetadataAccountLayout.nameOffset);
                 (string symbol,_) = binData.DecodeRustString( MetadataAccountLayout.symbolOffset);
                 (string uri,_) = binData.DecodeRustString( MetadataAccountLayout.uriOffset);
-                uint sellerFee = binData.GetU32( MetadataAccountLayout.feeBasisOffset );
+                uint sellerFee = binData.GetU16( MetadataAccountLayout.feeBasisOffset );
 
                 var numOfCreators = binData.GetU16( MetadataAccountLayout.creatorsOffset );
                 var creators = MetadataProgramData.DecodeCreators( binData.GetSpan( 
