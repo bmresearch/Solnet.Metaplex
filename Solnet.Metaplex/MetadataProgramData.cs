@@ -56,8 +56,8 @@ namespace Solnet.Metaplex
         public Creator( ReadOnlySpan<byte> encoded )
         {
             this.key = encoded.GetPubKey(0);
-            bool verified = Convert.ToBoolean( encoded.GetU8(32) );
-            uint share = encoded.GetU8(33);
+            this.verified = Convert.ToBoolean( encoded.GetU8(32) );
+            this.share = encoded.GetU8(33);
         }
 
         /// <summary>
