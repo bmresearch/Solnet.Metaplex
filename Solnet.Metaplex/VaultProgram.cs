@@ -23,8 +23,19 @@ namespace Solnet.Metaplex
         /// <summary>
         /// The program's name.
         /// </summary>
-        private const string ProgramName = "Vault Program";
+        public const string ProgramName = "Vault Program";
 
+        /// <summary>
+        ///  Inititialize the vault
+        /// </summary>
+        /// <param name="ShareMint"></param>
+        /// <param name="RedeemTreasuryTokenAccount"></param>
+        /// <param name="FractionTreasuryTokenAccount"></param>
+        /// <param name="Vault"></param>
+        /// <param name="VaultAuthority"></param>
+        /// <param name="PriceLookupAddress"></param>
+        /// <param name="allowFurtherShareCreation"></param>
+        /// <returns></returns>
         public static TransactionInstruction InitVault(
             PublicKey ShareMint,
             PublicKey RedeemTreasuryTokenAccount,
@@ -56,6 +67,18 @@ namespace Solnet.Metaplex
             };
         }
         
+        /// <summary>
+        /// Adds a token to a inactive vault
+        /// </summary>
+        /// <param name="SafetyDepositBox"></param>
+        /// <param name="TokenAccount"></param>
+        /// <param name="TokenStoreAccount"></param>
+        /// <param name="FractionTreasuryTokenAccount"></param>
+        /// <param name="VaultAuthority"></param>
+        /// <param name="Payer"></param>
+        /// <param name="TransferAuthority"></param>
+        /// <param name="amount" type="UInt64"></param>
+        /// <returns> TransactionInstruction </returns>
         public static TransactionInstruction AddTokenToInactiveVault(
             PublicKey SafetyDepositBox,
             PublicKey TokenAccount,
