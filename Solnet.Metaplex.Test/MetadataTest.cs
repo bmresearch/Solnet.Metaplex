@@ -236,7 +236,7 @@ namespace Solnet.Metaplex.Test
         public void TestGetAndDecodeMessage() 
         {
             var client = Solnet.Rpc.ClientFactory.GetClient(Solnet.Rpc.Cluster.MainNet);
-            var res = client.GetConfirmedTransaction("3tpv4udpeQ9NZhCXRkVdPz7aJqqakLPurFTLtTR6Z7UEo9gtr7UCu9rLgFEfizYwB8sQHci9CTJdZex7qSsUr2EV");
+            var res = client.GetTransaction("3tpv4udpeQ9NZhCXRkVdPz7aJqqakLPurFTLtTR6Z7UEo9gtr7UCu9rLgFEfizYwB8sQHci9CTJdZex7qSsUr2EV");
 
 
             //Thread.Sleep(3000);
