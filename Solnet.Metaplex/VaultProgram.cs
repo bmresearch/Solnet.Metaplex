@@ -19,6 +19,7 @@ namespace Solnet.Metaplex
         /// The public key of the Vault Program.
         /// </summary>
         public static readonly PublicKey ProgramIdKey = new("vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn");
+        public const string PREFIX = "vault";
 
         /// <summary>
         /// The program's name.
