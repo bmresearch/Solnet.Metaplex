@@ -54,7 +54,7 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( VaultAuthority, false),
                 AccountMeta.ReadOnly( PriceLookupAddress, false),
                 AccountMeta.ReadOnly( TokenProgram.ProgramIdKey, false),
-                AccountMeta.ReadOnly( SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
             return new TransactionInstruction{
@@ -99,8 +99,8 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( Payer, true),
                 AccountMeta.ReadOnly( TransferAuthority, true),
                 AccountMeta.ReadOnly( TokenProgram.ProgramIdKey, false),
-                AccountMeta.ReadOnly( SystemProgram.SysVarRentKey, false),
-                AccountMeta.ReadOnly( SystemProgram.SysVarRentKey , false)
+                AccountMeta.ReadOnly( SysVars.RentKey, false),
+                AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
             return new TransactionInstruction{

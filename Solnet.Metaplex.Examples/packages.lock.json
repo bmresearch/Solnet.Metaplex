@@ -2,22 +2,31 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v5.0": {
+      "Solnet.Programs": {
+        "type": "Direct",
+        "requested": "[0.4.17, )",
+        "resolved": "0.4.17",
+        "contentHash": "uGfOM5zcE2uTTOHFaWiOj1fee/fi+QjgeTc57ETPPNIvkkm4i8PFZJ0HFdfehLNk1uDd2H277ua/ZJdFXwIz3w==",
+        "dependencies": {
+          "Solnet.Rpc": "0.4.17"
+        }
+      },
       "Solnet.Rpc": {
         "type": "Direct",
-        "requested": "[0.4.2, )",
-        "resolved": "0.4.2",
-        "contentHash": "55qQqaXmtFyBIGBJ/VaLqkxJSDTFAHEF6lMMWGpIV6p7EV99TTBSUtE2zFmDtImD8YkplocCIpwU7kWGdqLzAA==",
+        "requested": "[0.4.17, )",
+        "resolved": "0.4.17",
+        "contentHash": "wrcafmjYq2wUWIzH2e0kRG4+ANy05G+IzuN0/Ka9+4vXtsgv59c1ZozCHlULEER50/deQo0UjIcRcjgaqh7OsA==",
         "dependencies": {
           "Microsoft.Extensions.Logging": "5.0.0",
           "Microsoft.Extensions.Logging.Console": "5.0.0",
-          "Solnet.Wallet": "0.4.2"
+          "Solnet.Wallet": "0.4.17"
         }
       },
       "Solnet.Wallet": {
         "type": "Direct",
-        "requested": "[0.4.2, )",
-        "resolved": "0.4.2",
-        "contentHash": "YHgndl6T6z4UTM6OYglIFqIj6zOJWbCaJGiILDA46LFnA0nIiWdqZM4yNucS2dI1P6fhkBTk7gnBRHlIS3RteA==",
+        "requested": "[0.4.17, )",
+        "resolved": "0.4.17",
+        "contentHash": "v/jzBQU52j7Vz9M6wOJlsShl5GUfea0lgt13T+dlbknFe07lceNScAv3uYRxR1cUQWuhIqsRNquLGp3VyhaJ3w==",
         "dependencies": {
           "Chaos.NaCl.Standard": "1.0.0",
           "Portable.BouncyCastle": "1.8.2"
@@ -144,20 +153,12 @@
       },
       "Solnet.KeyStore": {
         "type": "Transitive",
-        "resolved": "0.4.2",
-        "contentHash": "WIg/2YjcSmeJ3W41up1N12iyBrhc6nYq0aRoBGi3BJ5EQdSn/x8r3tE663rqDqU8ydi0IzfUgHXZd638nSLgVg==",
+        "resolved": "0.4.17",
+        "contentHash": "89w1PKk0e9Glzt/dW1vPfoH2utVINdi3+9875+Qh2tpC8iVEeNlGr7tJCY4J5WF8Ht9vCqcuEu1qJ55Mf+myKg==",
         "dependencies": {
           "Chaos.NaCl.Standard": "1.0.0",
           "Portable.BouncyCastle": "1.8.2",
-          "Solnet.Wallet": "0.4.2"
-        }
-      },
-      "Solnet.Programs": {
-        "type": "Transitive",
-        "resolved": "0.4.2",
-        "contentHash": "931jvjXMKjnDPZiKzLhdBRnt3miDu128HJ6Sqw0mIPZ8MXXdtKJ4KVz8SdU3iEi2oBrhc77Le7yJn1BJGWVVxg==",
-        "dependencies": {
-          "Solnet.Rpc": "0.4.2"
+          "Solnet.Wallet": "0.4.17"
         }
       },
       "solnet.metaplex": {
@@ -166,10 +167,10 @@
           "Microsoft.Extensions.Logging": "5.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "5.0.0",
           "Microsoft.Extensions.Logging.Console": "5.0.0",
-          "Solnet.Keystore": "0.4.2",
-          "Solnet.Programs": "0.4.2",
-          "Solnet.Rpc": "0.4.2",
-          "Solnet.Wallet": "0.4.2"
+          "Solnet.Keystore": "0.4.17",
+          "Solnet.Programs": "0.4.17",
+          "Solnet.Rpc": "0.4.17",
+          "Solnet.Wallet": "0.4.17"
         }
       }
     }
