@@ -33,7 +33,7 @@ namespace Solnet.Metaplex.Examples
             if ( balanceRes.WasSuccessful )
                 Console.WriteLine("Account balance: {0}", balanceRes.Result.Value);
 
-            var mint = wallet.GetAccount(20);
+            var mint = wallet.GetAccount(55);
 
                         //PDA METADATA
 
@@ -132,15 +132,15 @@ namespace Solnet.Metaplex.Examples
                         true
                     )
                 )
-                .AddInstruction(
-                    MetadataProgram.UpdateMetadataAccount(
-                        new PublicKey(metadataAddress),
-                        wallet.Account.PublicKey,
-                        null,
-                        data2,
-                        null
-                    )
-                )
+                // .AddInstruction(
+                //     MetadataProgram.UpdateMetadataAccount(
+                //         new PublicKey(metadataAddress),
+                //         wallet.Account.PublicKey,
+                //         null,
+                //         data2,
+                //         null
+                //     )
+                // )
                 .Build(new List<Account> { wallet.Account , mint});
 
             var simTX = client.SimulateTransactionAsync(TX).Result;

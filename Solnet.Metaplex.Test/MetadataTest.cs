@@ -121,7 +121,7 @@ namespace Solnet.Metaplex.Test
 
         }
     
-        //[TestMethod]
+        [TestMethod]
         public void TestCreateMetadataAccount()
         {
             var rpcClient = ClientFactory.GetClient(Cluster.DevNet); //, logger);
@@ -197,12 +197,12 @@ namespace Solnet.Metaplex.Test
                         true                    //ISMUTABLE
                     )
                 )
-                // .AddInstruction(
-                //     MetadataProgram.SignMetada(
-                //         new PublicKey(metadataAddress),
-                //         c2.key
-                //     )
-                // )
+                 .AddInstruction(
+                     MetadataProgram.SignMetada(
+                         new PublicKey(metadataAddress),
+                         c2.key
+                     )
+                 )
                 .AddInstruction(
                     MetadataProgram.PuffMetada(
                         new PublicKey(metadataAddress)
@@ -221,12 +221,14 @@ namespace Solnet.Metaplex.Test
                 )
             .Build(new List<Account> { fromAccount, wallet.GetAccount(101) });
 
-            //var txSim2 = rpcClient.SimulateTransaction(TX2);
+            var txSim2 = rpcClient.SimulateTransaction(TX2);
 
             //InstructionDecoder.Register(MetadataProgram.ProgramIdKey, MetadataProgram.Decode);
             //List<DecodedInstruction> decodedInstructions = InstructionDecoder.DecodeInstructions( TX2 );
 
-            //Console.WriteLine($"Transaction sim: \n { txSim2.RawRpcResponse }");
+            Console.WriteLine($"Transaction sim: \n { txSim2.RawRpcResponse }");
+
+            Assert.IsFalse( txSim2.RawRpcResponse.Contains("Error"));
 
         }
 
