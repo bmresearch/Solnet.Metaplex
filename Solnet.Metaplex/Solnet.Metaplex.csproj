@@ -6,7 +6,7 @@
         </Description>
         <TargetFramework>net5.0</TargetFramework>
 
-        <IsPackable>false</IsPackable>
+        <IsPackable>true</IsPackable>
 
         <RootNamespace>Solnet.Metaplex</RootNamespace>
     </PropertyGroup>
