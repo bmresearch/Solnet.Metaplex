@@ -1,6 +1,6 @@
 image:
-  image: gitpod/workspace-dotnet
-
+  file: .gitpod.Dockerfile
+  
 tasks:
   - name: Restore & Build
     init: |
