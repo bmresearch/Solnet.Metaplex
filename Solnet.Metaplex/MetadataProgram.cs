@@ -66,7 +66,7 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly(payerKey, true),
                 AccountMeta.ReadOnly(updateAuthority, updateAuthorityIsSigner),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
 
 
@@ -210,7 +210,7 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly(metadataKey, false),
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
 
             return new TransactionInstruction
@@ -273,7 +273,7 @@ namespace Solnet.Metaplex
 
                 AccountMeta.ReadOnly(TokenProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
-                AccountMeta.ReadOnly(SystemProgram.SysVarRentKey, false)
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
 
 

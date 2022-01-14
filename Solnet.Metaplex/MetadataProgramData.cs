@@ -120,23 +120,27 @@ namespace Solnet.Metaplex
         )
         {
 
-            byte[] encodedName = Serialization.EncodeRustString(parameters.name);
-            byte[] encodedSymbol = Serialization.EncodeRustString(parameters.symbol);
-            byte[] encodedUri = Serialization.EncodeRustString(parameters.uri);
+            byte[] encodedName = Encoding.UTF8.GetBytes(parameters.name); 
+            byte[] encodedSymbol = Encoding.UTF8.GetBytes(parameters.symbol);
+            byte[] encodedUri = Encoding.UTF8.GetBytes(parameters.uri);
 
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
             writer.Write( (byte) MetadataProgramInstructions.Values.CreateMetadataAccount );
+            writer.Write( encodedName.Length );
             writer.Write( encodedName) ;
+            writer.Write( encodedSymbol.Length );
             writer.Write( encodedSymbol );
+            writer.Write( encodedUri.Length );
             writer.Write( encodedUri );
             writer.Write( (ushort) parameters.sellerFeeBasisPoints);
 
             if ( parameters.creators == null || parameters.creators?.Count < 1 )
             {
                 writer.Write( (byte) 0); //Option()
-            } else 
+            } 
+            else 
             {
                 writer.Write( (byte) 1);
                 writer.Write( parameters.creators.Count );
@@ -170,13 +174,17 @@ namespace Solnet.Metaplex
             {
                 writer.Write((byte)1);
 
-                byte[] encodedName = Serialization.EncodeRustString(parameters.name);
-                byte[] encodedSymbol = Serialization.EncodeRustString(parameters.symbol);
-                byte[] encodedUri = Serialization.EncodeRustString(parameters.uri);
+                byte[] encodedName = Encoding.UTF8.GetBytes(parameters.name);
+                byte[] encodedSymbol = Encoding.UTF8.GetBytes(parameters.symbol);
+                byte[] encodedUri = Encoding.UTF8.GetBytes(parameters.uri);
 
-                writer.Write( encodedName) ;
-                writer.Write( encodedSymbol );
-                writer.Write( encodedUri );
+                writer.Write(encodedName.Length);
+                writer.Write(encodedName);
+                writer.Write(encodedSymbol.Length);
+                writer.Write(encodedSymbol);
+                writer.Write(encodedUri.Length);
+                writer.Write(encodedUri);
+
                 writer.Write( (ushort) parameters.sellerFeeBasisPoints);
 
                 if ( parameters.creators == null || parameters.creators?.Count < 1 )
@@ -271,10 +279,15 @@ namespace Solnet.Metaplex
             decodedInstruction.Values.Add("updateAuthorityKey", keys[keyIndices[4]]);
             decodedInstruction.Values.Add("SysProgramId", keys[keyIndices[5]]);
             decodedInstruction.Values.Add("SysVarRentKey", keys[keyIndices[6]]);
+
+            string name;
+            string symbol;
+            string uri;
+
+            int nameLength = data.GetString( 1 , out name);
+            int symbolLength = data.GetString( 1 + nameLength , out symbol);
+            int uriLength = data.GetString( 1 + nameLength + symbolLength  ,out uri);
             
-            (string name , int nameLength)  = data.DecodeRustString(1);
-            (string symbol, int symbolLength) = data.DecodeRustString(1 + nameLength);
-            (string uri, int uriLength) = data.DecodeRustString(1 + nameLength+symbolLength);
             int sellerFeeBasisPoints = data.GetU16(1 + nameLength + symbolLength + uriLength);
             
             decodedInstruction.Values.Add("name", name );
@@ -335,9 +348,15 @@ namespace Solnet.Metaplex
             if ( data.GetU8(offset) == 1 )
             {
                 offset++;
-                (string name , int nameLength)  = data.DecodeRustString(offset);
-                (string symbol, int symbolLength) = data.DecodeRustString(offset+nameLength);
-                (string uri, int uriLength) = data.DecodeRustString(offset+nameLength+symbolLength);
+
+                string name;
+                string symbol;
+                string uri;
+
+                int nameLength = data.GetString(offset, out name);
+                int symbolLength = data.GetString(offset + nameLength, out symbol);
+                int uriLength = data.GetString(offset + nameLength + symbolLength, out uri);
+
                 int sellerFeeBasisPoints = data.GetU16(offset + nameLength + symbolLength + uriLength);
 
                 decodedInstruction.Values.Add("name", name );

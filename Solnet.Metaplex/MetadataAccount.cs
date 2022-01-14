@@ -91,10 +91,15 @@ namespace Solnet.Metaplex
                 byte[] bytes = Convert.FromBase64String(data[0]);
                 ReadOnlySpan<byte> binData = new(bytes);
 
-                (string name,_) = binData.DecodeRustString( MetadataAccountLayout.nameOffset);
-                (string symbol,_) = binData.DecodeRustString( MetadataAccountLayout.symbolOffset);
-                (string uri,_) = binData.DecodeRustString( MetadataAccountLayout.uriOffset);
-                uint sellerFee = binData.GetU32( MetadataAccountLayout.feeBasisOffset );
+                string name;
+                string symbol;
+                string uri;
+
+                binData.GetString( MetadataAccountLayout.nameOffset, out name);
+                binData.GetString( MetadataAccountLayout.symbolOffset, out symbol);
+                binData.GetString( MetadataAccountLayout.uriOffset, out uri);
+
+                uint sellerFee = binData.GetU16( MetadataAccountLayout.feeBasisOffset );
 
                 var numOfCreators = binData.GetU16( MetadataAccountLayout.creatorsOffset );
                 var creators = MetadataProgramData.DecodeCreators( binData.GetSpan( 
