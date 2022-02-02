@@ -1,4 +1,4 @@
-caseusing System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Solnet.Metaplex
 {
