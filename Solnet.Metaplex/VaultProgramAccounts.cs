@@ -58,8 +58,7 @@ namespace Solnet.Metaplex
 
         class SafetyDepositBox : Account
         {
-            private AccountInfo info;
-            
+            private AccountInfo info;      
             public VaultKey key;
             public PublicKey vault;
             public PublicKey tokenMint;
@@ -74,7 +73,9 @@ namespace Solnet.Metaplex
             SafetyDepositBox(PublicKey pk, AccountInfo info)
             {
                 if (VaultProgram.ProgramIdKey != info.Owner) throw new ErrorNotOwner();
-                if (SafetyDepositBox.IsCompatible(info.Data[0] )) throw new ErrorInvalidAccountData(); // Encoding??
+                if ( info.Data.Count != 0 
+                    && SafetyDepositBox.IsCompatible( Encoding.UTF8.GetBytes(info.Data[0]) )) 
+                    throw new ErrorInvalidAccountData(); 
                 this.info = info;
             }
             
