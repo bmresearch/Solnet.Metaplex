@@ -10,6 +10,9 @@ using System.Text;
 
 namespace Solnet.Metaplex
 {
+    /// <summary>
+    /// Internal class for Vault Program encoding and decoding of instructions
+    /// </summary>
     public class VaultProgramData
     {
         internal static byte[] EncodeAddTokenToInactiveVault( UInt64 amount )
