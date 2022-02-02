@@ -1,6 +1,6 @@
 image:
   file: .gitpod.Dockerfile
-
+  
 tasks:
   - name: Restore & Build
     init: |

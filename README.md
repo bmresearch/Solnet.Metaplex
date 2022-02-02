@@ -42,6 +42,8 @@ separate repository so it is contained, as the goal for [Solnet](https://github.
 
 ## Contribution
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/bmresearch/Solnet.Metaplex)
+
 We encourage everyone to contribute, submit issues, PRs, discuss. Every kind of help is welcome.
 
 ## Contributors
