@@ -221,6 +221,23 @@ namespace Solnet.Metaplex
             };
         }
 
+        /// <summary>
+        ///  Mint a new edition via token
+        /// </summary>
+        /// <param name="edition"></param>
+        /// <param name="newMetadataKey"></param>
+        /// <param name="newEdition"></param>
+        /// <param name="masterEdition"></param>
+        /// <param name="newMint"></param>
+        /// <param name="newMintAuthority"></param>
+        /// <param name="payer"></param>
+        /// <param name="tokenAccountOwner"></param>
+        /// <param name="tokenAccount"></param>
+        /// <param name="updateAuthority"></param>
+        /// <param name="newMetadataUpdateAuthority"></param>
+        /// <param name="metadataKey"></param>
+        /// <param name="metadataMint"></param>
+        /// <returns></returns>
         public static TransactionInstruction MintNewEditionFromMasterEditionViaToken(
             uint edition,
             PublicKey newMetadataKey,
