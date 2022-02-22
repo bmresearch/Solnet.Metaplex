@@ -33,7 +33,7 @@ namespace Solnet.Metaplex.Examples
             if ( balanceRes.WasSuccessful )
                 Console.WriteLine("Account balance: {0}", balanceRes.Result.Value);
 
-            var mint = wallet.GetAccount(55);
+            var mint = wallet.GetAccount(59);
 
                         //PDA METADATA
 

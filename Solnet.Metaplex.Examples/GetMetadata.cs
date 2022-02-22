@@ -10,14 +10,14 @@ namespace Solnet.Metaplex.Examples
 
 public class GetMetadataExample : IRunnableExample
 {
-    string pk = "6W5UQqiUSycsMzpvtQkzApguBFfwqzE3LgNFsh3PBW6J";
-    public void Run()
+    string pk = "5CEeeHkyezrVpexdKjGkMv18dDRRW2tbF45yr5YfmAHt";
+    public async void Run()
     {
         Console.WriteLine("### Get Metadata example ###");
         Console.WriteLine("Getting account {0}", pk );
 
         var client = ClientFactory.GetClient( Cluster.MainNet);
-        var account = MetadataAccount.GetAccount( client, new PublicKey(pk )).Result;
+        var account = await MetadataAccount.GetAccount( client, new PublicKey(pk ));
 
         Console.WriteLine( $"Owner: {account.owner}");
         Console.WriteLine( $"Authority key: {account.updateAuthority}");
@@ -34,7 +34,11 @@ public class GetMetadataExample : IRunnableExample
             Console.WriteLine( $"Creator Share: {c.share}");
             Console.WriteLine( $"Creator is verified: {c.verified}");
         }
-        Console.WriteLine(  "--------------");
+        Console.WriteLine(  "---Metadata-------");
+
+        Console.Write( await account.data.FetchMetadata() );
+
+        Console.WriteLine ( "------------------");
     }
 }
 

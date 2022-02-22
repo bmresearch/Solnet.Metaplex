@@ -8,7 +8,8 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Net.Http;
+using System.Net;
 
 namespace Solnet.Metaplex 
 {
@@ -69,6 +70,9 @@ namespace Solnet.Metaplex
         /// <summary> Creators array </summary>
         public IList<Creator> creators;
 
+        ///<summary> metadata json </summary>
+        public string metadata;
+
         /// <summary> Constructor </summary>
         public Data( string name, string symbol, string uri, uint sellerFee, IList<Creator> creators)
         {
@@ -77,6 +81,22 @@ namespace Solnet.Metaplex
             this.uri = uri;
             this.sellerFeeBasisPoints = sellerFee;
             this.creators = creators;
+        }
+
+        /// <summary> Tries to get a json file from the uri </summary>
+        public async Task<string> FetchMetadata()
+        {
+            if ( uri is null)
+                return null;
+            
+            if ( metadata is null )
+            {
+                using var http = new HttpClient();
+                var res = await http.GetStringAsync(uri);
+                metadata = res;
+            }
+            
+            return metadata;             
         }
     }
 
@@ -147,6 +167,9 @@ namespace Solnet.Metaplex
                     numOfCreators * ( 32 + 1 +1)
                 ));
 
+                name = name.TrimEnd('\0');
+                symbol = symbol.TrimEnd('\0');
+                uri = uri.TrimEnd('\0');
                 var res = new Data(
                     name,symbol,uri,sellerFee,creators
                 );
