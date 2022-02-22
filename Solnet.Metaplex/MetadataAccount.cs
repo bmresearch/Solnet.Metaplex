@@ -155,9 +155,9 @@ namespace Solnet.Metaplex
                 string symbol;
                 string uri;
 
-                binData.GetString( MetadataAccountLayout.nameOffset, out name);
-                binData.GetString( MetadataAccountLayout.symbolOffset, out symbol);
-                binData.GetString( MetadataAccountLayout.uriOffset, out uri);
+                int nameLength = binData.GetBorshString( MetadataAccountLayout.nameOffset, out name );
+                int symbolLength = binData.GetBorshString( MetadataAccountLayout.symbolOffset, out symbol);
+                int uriLength = binData.GetBorshString( MetadataAccountLayout.uriOffset, out uri);
 
                 uint sellerFee = binData.GetU16( MetadataAccountLayout.feeBasisOffset );
 
@@ -213,9 +213,9 @@ namespace Solnet.Metaplex
                         mintAccount = pk;
                     }
 
-                    byte[] metadataAddress = new byte[32];
-                    int nonce;
-                    AddressExtensions.TryFindProgramAddress(
+                    PublicKey metadataAddress;
+                    byte nonce;
+                    PublicKey.TryFindProgramAddress(
                         new List<byte[]>() {
                             Encoding.UTF8.GetBytes("metadata"),
                             MetadataProgram.ProgramIdKey,
@@ -226,7 +226,7 @@ namespace Solnet.Metaplex
                         out nonce
                     );
 
-                    return await GetAccount(client, new PublicKey(metadataAddress));
+                    return await GetAccount(client, metadataAddress);
                 }
             }
             else

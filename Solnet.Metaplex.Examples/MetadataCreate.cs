@@ -37,9 +37,9 @@ namespace Solnet.Metaplex.Examples
 
                         //PDA METADATA
 
-            byte[] metadataAddress = new byte[32];
-            int nonce;
-            AddressExtensions.TryFindProgramAddress(
+            PublicKey metadataAddress;
+            byte nonce;
+            PublicKey.TryFindProgramAddress(
                 new List<byte[]>() {
                     Encoding.UTF8.GetBytes("metadata"),
                     MetadataProgram.ProgramIdKey,
@@ -51,12 +51,12 @@ namespace Solnet.Metaplex.Examples
             );
 
 
-            Console.WriteLine($"PDA METADATA: {new PublicKey(metadataAddress)}");
+            Console.WriteLine($"PDA METADATA: {metadataAddress}");
 
             //PDA MASTER EDITION
-            byte[] masterEditionAddress = new byte[32];
+            PublicKey masterEditionAddress;
             //int nonce;
-            AddressExtensions.TryFindProgramAddress(
+            PublicKey.TryFindProgramAddress(
                 new List<byte[]>() {
                     Encoding.UTF8.GetBytes("metadata"),
                     MetadataProgram.ProgramIdKey,
@@ -67,7 +67,7 @@ namespace Solnet.Metaplex.Examples
                 out masterEditionAddress,
                 out nonce
             );
-            Console.WriteLine($"PDA MASTER: {new PublicKey(masterEditionAddress)}");
+            Console.WriteLine($"PDA MASTER: {masterEditionAddress}");
             
             //CREATORS
 
@@ -122,7 +122,7 @@ namespace Solnet.Metaplex.Examples
                 )
                 .AddInstruction(
                     MetadataProgram.CreateMetadataAccount(
-                        new PublicKey(metadataAddress),
+                        metadataAddress,
                         mint,
                         wallet.Account.PublicKey,
                         wallet.Account.PublicKey,

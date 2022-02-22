@@ -257,9 +257,9 @@ namespace Solnet.Metaplex
             int BIT_SIZE = 248;
             int editionNumber = (int)Math.Floor((double)edition / BIT_SIZE);
             //EDITION PDA
-            byte[] editionPda = new byte[32];
-            int nonce;
-            AddressExtensions.TryFindProgramAddress(
+            PublicKey editionPda;
+            byte nonce;
+            PublicKey.TryFindProgramAddress(
                 new List<byte[]>() {
                     Encoding.UTF8.GetBytes("metadata"),
                     MetadataProgram.ProgramIdKey,
@@ -278,7 +278,7 @@ namespace Solnet.Metaplex
                 AccountMeta.Writable(newEdition, false),
                 AccountMeta.Writable(masterEdition, false),
                 AccountMeta.Writable(newMint, false),
-                AccountMeta.Writable(new PublicKey(editionPda), false),
+                AccountMeta.Writable(editionPda, false),
 
                 AccountMeta.ReadOnly(newMintAuthority, true),
                 AccountMeta.ReadOnly(payer, true),
