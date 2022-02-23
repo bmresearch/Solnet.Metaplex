@@ -280,9 +280,13 @@ namespace Solnet.Metaplex
             decodedInstruction.Values.Add("SysProgramId", keys[keyIndices[5]]);
             decodedInstruction.Values.Add("SysVarRentKey", keys[keyIndices[6]]);
 
-            (string name, int nameLength) = data.DecodeBincodeString( 1 );
-            (string symbol , int symbolLength) = data.DecodeBincodeString( 1 + nameLength );
-            (string uri, int uriLength) = data.DecodeBincodeString( 1 + nameLength + symbolLength);
+            string name;
+            string symbol;
+            string uri;
+
+            int nameLength = data.GetBorshString( 1 , out name );
+            int symbolLength = data.GetBorshString( 1 + nameLength , out symbol );
+            int uriLength = data.GetBorshString( 1 + nameLength + symbolLength , out uri );
             
             int sellerFeeBasisPoints = data.GetU16(1 + nameLength + symbolLength + uriLength);
             
@@ -345,9 +349,13 @@ namespace Solnet.Metaplex
             {
                 offset++;
 
-                (string name, int nameLength) = data.DecodeBincodeString( 1 );
-                (string symbol , int symbolLength) = data.DecodeBincodeString( 1 + nameLength );
-                (string uri, int uriLength) = data.DecodeBincodeString( 1 + nameLength + symbolLength);
+                string name;
+                string symbol;
+                string uri;
+
+                int nameLength = data.GetBorshString( offset , out name );
+                int symbolLength = data.GetBorshString( offset + nameLength , out symbol );
+                int uriLength = data.GetBorshString( offset + nameLength + symbolLength , out uri );
 
                 int sellerFeeBasisPoints = data.GetU16(offset + nameLength + symbolLength + uriLength);
 
