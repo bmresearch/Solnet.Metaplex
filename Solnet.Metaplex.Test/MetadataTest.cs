@@ -135,9 +135,9 @@ namespace Solnet.Metaplex.Test
 
             //PDA METADATA
 
-            byte[] metadataAddress = new byte[32];
-            int nonce;
-            AddressExtensions.TryFindProgramAddress(
+            PublicKey metadataAddress;
+            byte nonce;
+            PublicKey.TryFindProgramAddress(
                 new List<byte[]>() {
                     Encoding.UTF8.GetBytes("metadata"),
                     MetadataProgram.ProgramIdKey,
@@ -149,12 +149,12 @@ namespace Solnet.Metaplex.Test
             );
 
 
-            Console.WriteLine($"PDA METADATA: {new PublicKey(metadataAddress)}");
+            Console.WriteLine($"PDA METADATA: { metadataAddress}");
 
             //PDA MASTER EDITION
-            byte[] masterEditionAddress = new byte[32];
-            //int nonce;
-            AddressExtensions.TryFindProgramAddress(
+            PublicKey masterEditionAddress;
+            //byte nonce;
+            PublicKey.TryFindProgramAddress(
                 new List<byte[]>() {
                     Encoding.UTF8.GetBytes("metadata"),
                     MetadataProgram.ProgramIdKey,
@@ -165,7 +165,7 @@ namespace Solnet.Metaplex.Test
                 out masterEditionAddress,
                 out nonce
             );
-            Console.WriteLine($"PDA MASTER: {new PublicKey(masterEditionAddress)}");
+            Console.WriteLine($"PDA MASTER: { masterEditionAddress }");
             
             //CREATORS
 
@@ -187,7 +187,7 @@ namespace Solnet.Metaplex.Test
                 .SetFeePayer(fromAccount)
                 .AddInstruction(
                     MetadataProgram.CreateMetadataAccount(
-                        new PublicKey(metadataAddress), //PDA
+                        metadataAddress, //PDA
                         mintAccount.PublicKey,  //MINT
                         fromAccount.PublicKey,  //mint AUTHORITY
                         fromAccount.PublicKey,  //PAYER
@@ -199,24 +199,24 @@ namespace Solnet.Metaplex.Test
                 )
                  .AddInstruction(
                      MetadataProgram.SignMetada(
-                         new PublicKey(metadataAddress),
+                         metadataAddress,
                          c2.key
                      )
                  )
                 .AddInstruction(
                     MetadataProgram.PuffMetada(
-                        new PublicKey(metadataAddress)
+                        metadataAddress
                     )
                 )
                 .AddInstruction(
                     MetadataProgram.CreateMasterEdition(
                         1,
-                        new PublicKey(masterEditionAddress),
+                        masterEditionAddress,
                         mintAccount.PublicKey,
                         fromAccount.PublicKey,
                         fromAccount.PublicKey,
                         fromAccount.PublicKey,
-                        new PublicKey(metadataAddress)
+                        metadataAddress
                     )
                 )
             .Build(new List<Account> { fromAccount, wallet.GetAccount(101) });

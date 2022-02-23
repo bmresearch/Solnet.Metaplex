@@ -21,10 +21,10 @@
         <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0.0" />
-        <PackageReference Include="Solnet.Keystore" Version="5.0.0" />
-        <PackageReference Include="Solnet.Programs" Version="5.0.0" />
-        <PackageReference Include="Solnet.Rpc" Version="5.0.0" />
-        <PackageReference Include="Solnet.Wallet" Version="5.0.0" />
+        <PackageReference Include="Solnet.Keystore" Version="5.0.1" />
+        <PackageReference Include="Solnet.Programs" Version="5.0.1" />
+        <PackageReference Include="Solnet.Rpc" Version="5.0.1" />
+        <PackageReference Include="Solnet.Wallet" Version="5.0.1" />
     </ItemGroup>
 
     <Import Project="..\SharedBuildProperties.props" />
