@@ -79,11 +79,11 @@ namespace Solnet.Metaplex
                 this.info = info;
             }
             
-            static byte[] getPDA(PublicKey vault, PublicKey mint)
+            static PublicKey getPDA(PublicKey vault, PublicKey mint)
             {
-                byte[] address = new byte[32];
-                int nonce;
-                AddressExtensions.TryFindProgramAddress(
+                PublicKey address;
+                byte nonce;
+                PublicKey.TryFindProgramAddress(
                     new List<byte[]>() {
                         Encoding.UTF8.GetBytes(VaultProgram.PREFIX),
                         vault,

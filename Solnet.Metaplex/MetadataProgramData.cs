@@ -284,9 +284,9 @@ namespace Solnet.Metaplex
             string symbol;
             string uri;
 
-            int nameLength = data.GetString( 1 , out name);
-            int symbolLength = data.GetString( 1 + nameLength , out symbol);
-            int uriLength = data.GetString( 1 + nameLength + symbolLength  ,out uri);
+            int nameLength = data.GetBorshString( 1 , out name );
+            int symbolLength = data.GetBorshString( 1 + nameLength , out symbol );
+            int uriLength = data.GetBorshString( 1 + nameLength + symbolLength , out uri );
             
             int sellerFeeBasisPoints = data.GetU16(1 + nameLength + symbolLength + uriLength);
             
@@ -353,9 +353,9 @@ namespace Solnet.Metaplex
                 string symbol;
                 string uri;
 
-                int nameLength = data.GetString(offset, out name);
-                int symbolLength = data.GetString(offset + nameLength, out symbol);
-                int uriLength = data.GetString(offset + nameLength + symbolLength, out uri);
+                int nameLength = data.GetBorshString( offset , out name );
+                int symbolLength = data.GetBorshString( offset + nameLength , out symbol );
+                int uriLength = data.GetBorshString( offset + nameLength + symbolLength , out uri );
 
                 int sellerFeeBasisPoints = data.GetU16(offset + nameLength + symbolLength + uriLength);
 

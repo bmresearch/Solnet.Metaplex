@@ -8,7 +8,8 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Net.Http;
+using System.Net;
 
 namespace Solnet.Metaplex 
 {
@@ -69,6 +70,9 @@ namespace Solnet.Metaplex
         /// <summary> Creators array </summary>
         public IList<Creator> creators;
 
+        ///<summary> metadata json </summary>
+        public string metadata;
+
         /// <summary> Constructor </summary>
         public Data( string name, string symbol, string uri, uint sellerFee, IList<Creator> creators)
         {
@@ -77,6 +81,22 @@ namespace Solnet.Metaplex
             this.uri = uri;
             this.sellerFeeBasisPoints = sellerFee;
             this.creators = creators;
+        }
+
+        /// <summary> Tries to get a json file from the uri </summary>
+        public async Task<string> FetchMetadata()
+        {
+            if ( uri is null)
+                return null;
+            
+            if ( metadata is null )
+            {
+                using var http = new HttpClient();
+                var res = await http.GetStringAsync(uri);
+                metadata = res;
+            }
+            
+            return metadata;             
         }
     }
 
@@ -135,9 +155,9 @@ namespace Solnet.Metaplex
                 string symbol;
                 string uri;
 
-                binData.GetString( MetadataAccountLayout.nameOffset, out name);
-                binData.GetString( MetadataAccountLayout.symbolOffset, out symbol);
-                binData.GetString( MetadataAccountLayout.uriOffset, out uri);
+                int nameLength = binData.GetBorshString( MetadataAccountLayout.nameOffset, out name );
+                int symbolLength = binData.GetBorshString( MetadataAccountLayout.symbolOffset, out symbol);
+                int uriLength = binData.GetBorshString( MetadataAccountLayout.uriOffset, out uri);
 
                 uint sellerFee = binData.GetU16( MetadataAccountLayout.feeBasisOffset );
 
@@ -147,6 +167,9 @@ namespace Solnet.Metaplex
                     numOfCreators * ( 32 + 1 +1)
                 ));
 
+                name = name.TrimEnd('\0');
+                symbol = symbol.TrimEnd('\0');
+                uri = uri.TrimEnd('\0');
                 var res = new Data(
                     name,symbol,uri,sellerFee,creators
                 );
@@ -190,9 +213,9 @@ namespace Solnet.Metaplex
                         mintAccount = pk;
                     }
 
-                    byte[] metadataAddress = new byte[32];
-                    int nonce;
-                    AddressExtensions.TryFindProgramAddress(
+                    PublicKey metadataAddress;
+                    byte nonce;
+                    PublicKey.TryFindProgramAddress(
                         new List<byte[]>() {
                             Encoding.UTF8.GetBytes("metadata"),
                             MetadataProgram.ProgramIdKey,
@@ -203,7 +226,7 @@ namespace Solnet.Metaplex
                         out nonce
                     );
 
-                    return await GetAccount(client, new PublicKey(metadataAddress));
+                    return await GetAccount(client, metadataAddress);
                 }
             }
             else

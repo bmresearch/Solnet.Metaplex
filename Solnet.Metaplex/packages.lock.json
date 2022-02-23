@@ -37,40 +37,40 @@
       },
       "Solnet.KeyStore": {
         "type": "Direct",
-        "requested": "[0.4.17, )",
-        "resolved": "0.4.17",
-        "contentHash": "89w1PKk0e9Glzt/dW1vPfoH2utVINdi3+9875+Qh2tpC8iVEeNlGr7tJCY4J5WF8Ht9vCqcuEu1qJ55Mf+myKg==",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "rz9rewa8IbGKUZOj2PxYOaYlSdqHTvM1ngFfZ8GanLabmb47jOycjwqWyb2nHR15re+CLv+Fv1ND7bjFNywRTg==",
         "dependencies": {
           "Chaos.NaCl.Standard": "1.0.0",
           "Portable.BouncyCastle": "1.8.2",
-          "Solnet.Wallet": "0.4.17"
+          "Solnet.Wallet": "5.0.1"
         }
       },
       "Solnet.Programs": {
         "type": "Direct",
-        "requested": "[0.4.17, )",
-        "resolved": "0.4.17",
-        "contentHash": "uGfOM5zcE2uTTOHFaWiOj1fee/fi+QjgeTc57ETPPNIvkkm4i8PFZJ0HFdfehLNk1uDd2H277ua/ZJdFXwIz3w==",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "17M7qC8JFWjiYl6cKJUrCmK2CJJmCWIlIfvYukKfnI5G01KYFQ+RFoRFFuXxPo98QAkZ942Cg8pu4MQW+xUnfQ==",
         "dependencies": {
-          "Solnet.Rpc": "0.4.17"
+          "Solnet.Rpc": "5.0.1"
         }
       },
       "Solnet.Rpc": {
         "type": "Direct",
-        "requested": "[0.4.17, )",
-        "resolved": "0.4.17",
-        "contentHash": "wrcafmjYq2wUWIzH2e0kRG4+ANy05G+IzuN0/Ka9+4vXtsgv59c1ZozCHlULEER50/deQo0UjIcRcjgaqh7OsA==",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "uz/qh8AjXTnQpjd5sNd/hZ3COqNaSP6YL5I3nVl6E9vrIeq7XvFErO7esa0MBGIGNCxN/jqmaU5av16bzBfCWg==",
         "dependencies": {
           "Microsoft.Extensions.Logging": "5.0.0",
           "Microsoft.Extensions.Logging.Console": "5.0.0",
-          "Solnet.Wallet": "0.4.17"
+          "Solnet.Wallet": "5.0.1"
         }
       },
       "Solnet.Wallet": {
         "type": "Direct",
-        "requested": "[0.4.17, )",
-        "resolved": "0.4.17",
-        "contentHash": "v/jzBQU52j7Vz9M6wOJlsShl5GUfea0lgt13T+dlbknFe07lceNScAv3uYRxR1cUQWuhIqsRNquLGp3VyhaJ3w==",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "9pm032WVuh9P1Pfb4I0yR4D5wWuzCVjC2r7POqDPbCZ5z0iRmJ3xiqt/jkO7VbDZWB5vlJ41BTgjRPipCaZQtA==",
         "dependencies": {
           "Chaos.NaCl.Standard": "1.0.0",
           "Portable.BouncyCastle": "1.8.2"
