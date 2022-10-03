@@ -2,9 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, net5 ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, net5 ]
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
         uses: cake-build/cake-action@v1
         with:
           script-path: build.cake
-          target: Pack
+          target: Report
           cake-bootstrap: true
       - name: Publish coverage report to coveralls.io
         uses: coverallsapp/github-action@v1.1.2
