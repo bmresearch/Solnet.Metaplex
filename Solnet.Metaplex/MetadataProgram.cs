@@ -12,8 +12,6 @@ using System.Linq;
 
 namespace Solnet.Metaplex
 {
-
-
     /// <summary>
     /// Implements the Metadata program methods.
     /// <remarks>
@@ -46,16 +44,7 @@ namespace Solnet.Metaplex
         /// <param name="updateAuthorityIsSigner"> Is the update authority a signer </param>
         /// <param name="isMutable"> Will the account stay mutable.</param>
         /// <returns>The transaction instruction.</returns> 
-        public static TransactionInstruction CreateMetadataAccount(
-            PublicKey metadataKey,
-            PublicKey mintKey,
-            PublicKey authorityKey,
-            PublicKey payerKey,
-            PublicKey updateAuthority,
-            MetadataParameters data,
-            bool updateAuthorityIsSigner,
-            bool isMutable
-        )
+        public static TransactionInstruction CreateMetadataAccount(PublicKey metadataKey, PublicKey mintKey, PublicKey authorityKey, PublicKey payerKey, PublicKey updateAuthority, MetadataV1 data, bool updateAuthorityIsSigner, bool isMutable)
         {
 
             List<AccountMeta> keys = new()
@@ -63,12 +52,11 @@ namespace Solnet.Metaplex
                 AccountMeta.Writable(metadataKey, false),
                 AccountMeta.ReadOnly(mintKey, false),
                 AccountMeta.ReadOnly(authorityKey, true),
-                AccountMeta.ReadOnly(payerKey, true),
-                AccountMeta.ReadOnly(updateAuthority, updateAuthorityIsSigner),
+                AccountMeta.Writable(payerKey, true),
+                AccountMeta.ReadOnly(updateAuthority, false),
                 AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
                 AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
-
 
             return new TransactionInstruction
             {
@@ -77,17 +65,44 @@ namespace Solnet.Metaplex
                 Data = MetadataProgramData.EncodeCreateMetadataAccountData(data, isMutable)
             };
         }
+        /// <summary>
+        /// Create Metadata object.
+        /// </summary>
+        /// <param name="metadataKey"> Metadata key (pda of ['metadata', program id, mint id]) </param>
+        /// <param name="mintKey"> Mint of token asset </param>
+        /// <param name="authorityKey"> Mint authority </param>
+        /// <param name="payerKey"> Transaction payer </param>
+        /// <param name="updateAuthority"> Metadata update authority </param>
+        /// <param name="data"> Metadata struct with name,symbol,uri and optional list of creators </param>
+        /// <param name="updateAuthorityIsSigner"> Is the update authority a signer </param>
+        /// <param name="isMutable"> Will the account stay mutable.</param>
+        /// /// <param name="collectionDetails"> Collection details - serial code</param>
+        /// <returns>The transaction instruction.</returns> 
+        public static TransactionInstruction CreateMetadataAccountV3(PublicKey metadataKey, PublicKey mintKey, PublicKey authorityKey, PublicKey payerKey, PublicKey updateAuthority,  MetadataV3 data, bool isMutable, bool updateAuthorityIsSigner, ulong collectionDetails = 0)
+        {   
+            List<AccountMeta> keys = new()
+            {
+                AccountMeta.Writable(metadataKey, false),
+                AccountMeta.ReadOnly(mintKey, false),
+                AccountMeta.ReadOnly(authorityKey, true),
+                AccountMeta.ReadOnly(payerKey, true),
+                AccountMeta.ReadOnly(updateAuthority, false),
+                AccountMeta.ReadOnly(SystemProgram.ProgramIdKey, false),
+                AccountMeta.ReadOnly(SysVars.RentKey, false)
+            };
+
+            return new TransactionInstruction
+            {
+                ProgramId = ProgramIdKey.KeyBytes,
+                Keys = keys,
+                Data = MetadataProgramData.EncodeCreateMetadataAccountDataV3(data, isMutable, collectionDetails)
+            };
+        }
 
         ///<summary>
         /// Update metadata account.
         ///</summary>
-        public static TransactionInstruction UpdateMetadataAccount(
-            PublicKey metadataKey,
-            PublicKey updateAuthority,
-            PublicKey newUpdateAuthority,
-            MetadataParameters data,
-            bool? primarySaleHappend
-        )
+        public static TransactionInstruction UpdateMetadataAccount( PublicKey metadataKey, PublicKey updateAuthority, PublicKey newUpdateAuthority, MetadataV1 data, bool? primarySaleHappend)
         {
             List<AccountMeta> keys = new()
             {
@@ -109,13 +124,10 @@ namespace Solnet.Metaplex
         /// <param name="metadataKey"> PDA of ('metadata', program id, mint id) </param>
         /// <param name="creatorKey"> Creator key </param>
         /// <returns></returns>
-        public static TransactionInstruction SignMetada(
-            PublicKey metadataKey,
-            PublicKey creatorKey
-        )
+        public static TransactionInstruction SignMetada(PublicKey metadataKey, PublicKey creatorKey)
         {
             byte[] data = new byte[1];
-            data.WriteU8((byte)MetadataProgramInstructions.Values.SignMetadata, 0);
+            data.WriteU8((byte)MetadataProgramDiscriminatorStruct.Values.SignMetadata, 0);
 
             return new TransactionInstruction()
             {
@@ -134,9 +146,7 @@ namespace Solnet.Metaplex
         /// </summary>
         /// <param name="metadataKey"> PDA of ('metadata', program id, mint id) </param>
         /// <returns></returns>
-        public static TransactionInstruction PuffMetada(
-            PublicKey metadataKey
-        )
+        public static TransactionInstruction PuffMetada(PublicKey metadataKey)
         {
             return new TransactionInstruction()
             {
@@ -145,7 +155,7 @@ namespace Solnet.Metaplex
                 {
                     AccountMeta.Writable( metadataKey , false )
                 },
-                Data = new byte[] { (byte)MetadataProgramInstructions.Values.PuffMetadata }
+                Data = new byte[] { (byte)MetadataProgramDiscriminatorStruct.Values.PuffMetadata }
             };
         }
 
@@ -159,22 +169,18 @@ namespace Solnet.Metaplex
         /// <param name="owner"> Owner on the token account </param>
         /// <param name="tokenAccount">  Account containing tokens from the metadata's mint </param>
         /// <returns></returns>
-        public static TransactionInstruction UpdatePrimarySaleHappendViaToken(
-            PublicKey metadataKey,
-            PublicKey owner,
-            PublicKey tokenAccount
-        )
+        public static TransactionInstruction UpdatePrimarySaleHappendViaToken(PublicKey metadataKey,PublicKey owner,PublicKey tokenAccount)
         {
             return new TransactionInstruction()
             {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = new List<AccountMeta>()
                 {
-                    AccountMeta.Writable( metadataKey, false ),
-                    AccountMeta.ReadOnly( owner, true ),
-                    AccountMeta.ReadOnly( tokenAccount, false )
+                    AccountMeta.Writable(metadataKey, false),
+                    AccountMeta.ReadOnly(owner, true),
+                    AccountMeta.ReadOnly(tokenAccount, false)
                 },
-                Data = new byte[] { (byte)MetadataProgramInstructions.Values.UpdatePrimarySaleHappenedViaToken }
+                Data = new byte[] { (byte)MetadataProgramDiscriminatorStruct.Values.UpdatePrimarySaleHappenedViaToken }
             };
         }
 
@@ -190,15 +196,7 @@ namespace Solnet.Metaplex
         /// <param name="payer"></param>
         /// <param name="metadataKey"></param>
         /// <returns> Transaction instruction. </returns>/
-        public static TransactionInstruction CreateMasterEdition(
-            ulong? maxSupply,
-            PublicKey masterEditionKey,
-            PublicKey mintKey,
-            PublicKey updateAuthorityKey,
-            PublicKey mintAuthority,
-            PublicKey payer,
-            PublicKey metadataKey
-        )
+        public static TransactionInstruction CreateMasterEdition(ulong? maxSupply, PublicKey masterEditionKey, PublicKey mintKey, PublicKey updateAuthorityKey, PublicKey mintAuthority, PublicKey payer, PublicKey metadataKey)
         {
             List<AccountMeta> keys = new()
             {
@@ -293,8 +291,6 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly(SysVars.RentKey, false)
             };
 
-
-
             return new TransactionInstruction 
             {
                 ProgramId = ProgramIdKey.KeyBytes,
@@ -313,13 +309,13 @@ namespace Solnet.Metaplex
         public static DecodedInstruction Decode( ReadOnlySpan<byte> data , IList<PublicKey> keys , byte[] keyIndices )
         {
             uint instruction = data.GetU8(MetadataProgramData.MethodOffset);
-            MetadataProgramInstructions.Values instructionValue =
-                (MetadataProgramInstructions.Values)Enum.Parse(typeof(MetadataProgramInstructions.Values), instruction.ToString());
+            MetadataProgramDiscriminatorStruct.Values instructionValue =
+                (MetadataProgramDiscriminatorStruct.Values)Enum.Parse(typeof(MetadataProgramDiscriminatorStruct.Values), instruction.ToString());
 
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
-                InstructionName = MetadataProgramInstructions.Names[instructionValue],
+                InstructionName = MetadataProgramDiscriminatorStruct.Names[instructionValue],
                 ProgramName = ProgramName,
                 Values = new Dictionary<string, object>(),
                 InnerInstructions = new List<DecodedInstruction>()
@@ -327,25 +323,28 @@ namespace Solnet.Metaplex
 
             switch (instructionValue)
             {
-                case MetadataProgramInstructions.Values.CreateMetadataAccount:
+                case MetadataProgramDiscriminatorStruct.Values.CreateMetadataAccount:
                     MetadataProgramData.DecodeCreateMetadataAccountData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case MetadataProgramInstructions.Values.UpdateMetadataAccount:
+                case MetadataProgramDiscriminatorStruct.Values.CreateMetadataAccountV3:
+                    MetadataProgramData.DecodeCreateMetadataAccountData(decodedInstruction, data, keys, keyIndices);
+                    break;
+                case MetadataProgramDiscriminatorStruct.Values.UpdateMetadataAccount:
                     MetadataProgramData.DecodeUpdateMetadataAccountData(decodedInstruction, data, keys, keyIndices);
                     break;
-                case MetadataProgramInstructions.Values.CreateMasterEdition:
+                case MetadataProgramDiscriminatorStruct.Values.CreateMasterEdition:
                     MetadataProgramData.DecodeCreateMasterEdition(decodedInstruction, data, keys, keyIndices);
                     break;
-                case MetadataProgramInstructions.Values.PuffMetadata:
+                case MetadataProgramDiscriminatorStruct.Values.PuffMetadata:
                     MetadataProgramData.DecodePuffMetada(decodedInstruction, data, keys, keyIndices);
                     break;
-                case MetadataProgramInstructions.Values.SignMetadata:
+                case MetadataProgramDiscriminatorStruct.Values.SignMetadata:
                     MetadataProgramData.DecodeSignMetada(decodedInstruction, data, keys, keyIndices);
                     break;
-                case MetadataProgramInstructions.Values.UpdatePrimarySaleHappenedViaToken:
+                case MetadataProgramDiscriminatorStruct.Values.UpdatePrimarySaleHappenedViaToken:
                     MetadataProgramData.DecodeUpdatePrimarySaleHappendViaToken(decodedInstruction, data, keys, keyIndices);
                     break;
-                case MetadataProgramInstructions.Values.MintNewEditionFromMasterEditionViaToken:
+                case MetadataProgramDiscriminatorStruct.Values.MintNewEditionFromMasterEditionViaToken:
                     MetadataProgramData.DecodeMintNewEditionFromMasterEditionViaToken(decodedInstruction, data, keys, keyIndices);
                     break;
             }

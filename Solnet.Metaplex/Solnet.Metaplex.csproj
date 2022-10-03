@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <Description>
             Solnet.Metaplex implements functionality to integrate Metaplex project into .Net applications.
         </Description>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
 
         <IsPackable>true</IsPackable>
 
@@ -18,13 +18,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0.0" />
-        <PackageReference Include="Solnet.Keystore" Version="5.0.1" />
-        <PackageReference Include="Solnet.Programs" Version="5.0.1" />
-        <PackageReference Include="Solnet.Rpc" Version="5.0.1" />
-        <PackageReference Include="Solnet.Wallet" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+        <PackageReference Include="Solnet.Extensions" Version="6.1.0" />
+        <PackageReference Include="Solnet.Keystore" Version="6.1.0" />
+        <PackageReference Include="Solnet.Programs" Version="6.1.0" />
+        <PackageReference Include="Solnet.Rpc" Version="6.1.0" />
+        <PackageReference Include="Solnet.Wallet" Version="6.1.0" />
     </ItemGroup>
 
     <Import Project="..\SharedBuildProperties.props" />
