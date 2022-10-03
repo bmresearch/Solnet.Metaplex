@@ -4,8 +4,6 @@ VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Solnet.Metaplex", "Solnet.Metaplex\Solnet.Metaplex.csproj", "{71A4300E-545E-4754-99FD-BB1CBAD40CCA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaplexTest", "MetaplexTest\MetaplexTest.csproj", "{5267C747-6A96-4811-8345-3A454708CB49}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,18 +26,6 @@ Global
 		{71A4300E-545E-4754-99FD-BB1CBAD40CCA}.Release|x64.Build.0 = Release|Any CPU
 		{71A4300E-545E-4754-99FD-BB1CBAD40CCA}.Release|x86.ActiveCfg = Release|Any CPU
 		{71A4300E-545E-4754-99FD-BB1CBAD40CCA}.Release|x86.Build.0 = Release|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Debug|x64.Build.0 = Debug|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Debug|x86.Build.0 = Debug|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Release|x64.ActiveCfg = Release|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Release|x64.Build.0 = Release|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Release|x86.ActiveCfg = Release|Any CPU
-		{5267C747-6A96-4811-8345-3A454708CB49}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
