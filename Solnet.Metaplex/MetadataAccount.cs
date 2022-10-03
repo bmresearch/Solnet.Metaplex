@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net;
 
-namespace Solnet.Metaplex 
+namespace Solnet.Metaplex
 {
     /// <summary> version and type fo metadata account </summary>
     public enum MetadataKey
@@ -31,7 +31,7 @@ namespace Solnet.Metaplex
     }
 
     /// <summary> Category </summary>
-    public class MetadataCategory 
+    public class MetadataCategory
     {
         /// <summary> Audio </summary>
         public string Audio = "audio";
@@ -74,7 +74,7 @@ namespace Solnet.Metaplex
         public string metadata;
 
         /// <summary> Constructor </summary>
-        public Data( string name, string symbol, string uri, uint sellerFee, IList<Creator> creators)
+        public Data(string name, string symbol, string uri, uint sellerFee, IList<Creator> creators)
         {
             this.name = name;
             this.symbol = symbol;
@@ -86,22 +86,22 @@ namespace Solnet.Metaplex
         /// <summary> Tries to get a json file from the uri </summary>
         public async Task<string> FetchMetadata()
         {
-            if ( uri is null)
+            if (uri is null)
                 return null;
-            
-            if ( metadata is null )
+
+            if (metadata is null)
             {
                 using var http = new HttpClient();
                 var res = await http.GetStringAsync(uri);
                 metadata = res;
             }
-            
-            return metadata;             
+
+            return metadata;
         }
     }
 
-    /// <summary> Metadata account class </summary>
-    public class MetadataAccount 
+    /// <summary> Metadata account class V2 </summary>
+    public class MetadataAccount
     {
         /// <summary> metadata public key </summary>
         public PublicKey metadataKey;
@@ -123,17 +123,17 @@ namespace Solnet.Metaplex
 
         /// <summary> Constructor </summary>
         /// <param name="accInfo"> Soloana account info </param>
-        public MetadataAccount( AccountInfo accInfo )
+        public MetadataAccount(AccountInfo accInfo)
         {
             try
             {
                 this.owner = new PublicKey(accInfo.Owner);
-                this.data = ParseData( accInfo.Data);
+                this.data = ParseData(accInfo.Data);
 
-                var data = Convert.FromBase64String( accInfo.Data[0]);
+                var data = Convert.FromBase64String(accInfo.Data[0]);
                 this.updateAuthority = new PublicKey(data[1..33]);
                 this.mint = new PublicKey(data[33..65]);
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
@@ -144,7 +144,7 @@ namespace Solnet.Metaplex
         /// <param name="data"> data </param>
         /// <returns> data struct </returns>
         /// <remarks> parses an array of bytes into a data struct </remarks>
-        public static Data ParseData( List<string> data)
+        public static Data ParseData(List<string> data)
         {
             try
             {
@@ -155,23 +155,23 @@ namespace Solnet.Metaplex
                 string symbol;
                 string uri;
 
-                int nameLength = binData.GetBorshString( MetadataAccountLayout.nameOffset, out name );
-                int symbolLength = binData.GetBorshString( MetadataAccountLayout.symbolOffset, out symbol);
-                int uriLength = binData.GetBorshString( MetadataAccountLayout.uriOffset, out uri);
+                int nameLength = binData.GetBorshString(MetadataAccountLayout.nameOffset, out name);
+                int symbolLength = binData.GetBorshString(MetadataAccountLayout.symbolOffset, out symbol);
+                int uriLength = binData.GetBorshString(MetadataAccountLayout.uriOffset, out uri);
 
-                uint sellerFee = binData.GetU16( MetadataAccountLayout.feeBasisOffset );
+                uint sellerFee = binData.GetU16(MetadataAccountLayout.feeBasisOffset);
 
-                var numOfCreators = binData.GetU16( MetadataAccountLayout.creatorsOffset );
-                var creators = MetadataProgramData.DecodeCreators( binData.GetSpan( 
-                    MetadataAccountLayout.creatorsOffset + 4  , 
-                    numOfCreators * ( 32 + 1 +1)
+                var numOfCreators = binData.GetU16(MetadataAccountLayout.creatorsOffset);
+                var creators = MetadataProgramData.DecodeCreators(binData.GetSpan(
+                    MetadataAccountLayout.creatorsOffset + 4,
+                    numOfCreators * (32 + 1 + 1)
                 ));
 
                 name = name.TrimEnd('\0');
                 symbol = symbol.TrimEnd('\0');
                 uri = uri.TrimEnd('\0');
                 var res = new Data(
-                    name,symbol,uri,sellerFee,creators
+                    name, symbol, uri, sellerFee, creators
                 );
 
                 return res;
@@ -187,28 +187,29 @@ namespace Solnet.Metaplex
         /// <param name="pk"> public key of a account to parse </param>
         /// <returns> Metadata account </returns>
         /// <remarks> it will try to find a metadata even from a token associated account </remarks>
-        async public static Task<MetadataAccount> GetAccount ( IRpcClient client , PublicKey pk )
+        async public static Task<MetadataAccount> GetAccount(IRpcClient client, PublicKey pk)
         {
-            var accInfoResponse = await client.GetAccountInfoAsync( pk.Key );
+            var accInfoResponse = await client.GetAccountInfoAsync(pk.Key);
 
-            if ( accInfoResponse.WasSuccessful) 
+            if (accInfoResponse.WasSuccessful)
             {
                 var accInfo = accInfoResponse.Result.Value;
 
                 if (accInfo.Owner.Contains("meta"))
                 {
                     return new MetadataAccount(accInfo);
-                } 
+                }
                 else //if(accInfo.Owner.Contains("Token")) 
                 {
                     var readdata = Convert.FromBase64String(accInfo.Data[0]);
 
                     PublicKey mintAccount;
 
-                    if( readdata.Length == 165 )
+                    if (readdata.Length == 165)
                     {
                         mintAccount = new PublicKey(readdata[..32]);
-                    } else //if( readdata.Length == 82)
+                    }
+                    else //if( readdata.Length == 82)
                     {
                         mintAccount = pk;
                     }
@@ -233,11 +234,6 @@ namespace Solnet.Metaplex
             {
                 return null;
             }
-        } 
-
-        // async public static MetadataAccount GetAccount ( string query )
-        // {
-
-        // }
+        }
     }
 }

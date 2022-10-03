@@ -2,6 +2,7 @@ using Solnet.Programs.Utilities;
 using Solnet.Programs;
 using Solnet.Wallet;
 using System;
+using System.Numerics;
 using System.Collections.Generic;
 using System.Buffers.Binary;
 using System.IO;
@@ -10,89 +11,6 @@ using System.Text;
 
 namespace Solnet.Metaplex
 {
-
-    /// <summary>
-    /// Creator class.
-    /// </summary>
-    public class Creator 
-    {
-        /// <summary>
-        /// Creators public key.
-        /// </summary>
-        public PublicKey key;
-
-        /// <summary>
-        ///  Did the creator sign?
-        /// </summary>
-        public bool verified;
-
-        /// <summary>
-        /// Creators share in percentages.
-        /// </summary>
-        public byte share;
-
-        /// <summary>
-        ///  Creator data byte lenght in an account data.
-        /// </summary>
-        public static int length = 34;
-
-        /// <summary>
-        ///  Creator constructor.
-        /// </summary>
-        /// <param name="key"> Public key of the creator</param>
-        /// <param name="share"> Creators share in percentages</param>
-        /// <param name="verified"> Did the creator sign?</param>/
-        public Creator( PublicKey key,  byte share , bool verified = false )
-        {
-            this.key = key;
-            this.verified = verified;
-            this.share = share;
-        }
-
-        /// <summary>
-        ///  Construct a Creator from a byte array ( deserialize ).
-        /// </summary>
-        /// <param name="encoded"></param>
-        public Creator( ReadOnlySpan<byte> encoded )
-        {
-            this.key = encoded.GetPubKey(0);
-            this.verified = Convert.ToBoolean( encoded.GetU8(32) );
-            this.share = encoded.GetU8(33);
-        }
-
-        /// <summary>
-        ///  Encode Creators data ( serialize ).
-        /// </summary>
-        /// <returns></returns>
-        public byte[] Encode() 
-        {
-            byte[] encodedBuffer = new byte[34];
-
-            encodedBuffer.WritePubKey( key , 0);
-            encodedBuffer.WriteU8( Convert.ToByte(verified) , 32 );
-            encodedBuffer.WriteU8( (byte)share , 33 );
-
-            return encodedBuffer;
-        }
-    }
-    /// <summary>
-    /// Metadata parameters for instructions
-    /// </summary>
-    public class MetadataParameters 
-    {
-        /// <summary>  Name or discription. Max 32 bytes. </summary>
-        public string name;
-        /// <summary>  Symbol. Max 10 bytes. </summary>
-        public string symbol;
-        /// <summary>  Uri. Max 100 bytes. </summary>
-        public string uri;
-        /// <summary>  Seller fee basis points for secondary sales. </summary>
-        public uint sellerFeeBasisPoints;
-        /// <summary>  List of creators. </summary>
-        public List<Creator> creators;
-    }
-
-
     /// <summary>
     /// Implements the metadata program data encodings.
     /// </summary>
@@ -100,26 +18,55 @@ namespace Solnet.Metaplex
     {
         internal const int MethodOffset = 0;
 
-        public static void PrintByteArray(byte[] bytes)
-        {
-            var sb = new StringBuilder("\nnew byte[] { ");
-            foreach (var b in bytes)
-            {
-                sb.Append(b + ", ");
-            }
-            sb.Append("}\n");
-            Console.WriteLine(sb.ToString());
-        }
-
         /// <summary>
-        /// Make encodings for CreateMetadataAccount instruction
+        /// CreateMetadataAccountV1 instruction encoded as byte array
         /// </summary>
-        internal static byte[] EncodeCreateMetadataAccountData (
-            MetadataParameters parameters, 
-            bool isMutable=true
-        )
+        internal static byte[] EncodeCreateMetadataAccountData(MetadataV1 parameters, bool isMutable = true)
         {
+            
+            byte[] encodedName = Encoding.UTF8.GetBytes(parameters.name);
+            byte[] encodedSymbol = Encoding.UTF8.GetBytes(parameters.symbol);
+            byte[] encodedUri = Encoding.UTF8.GetBytes(parameters.uri);
 
+            var buffer = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(buffer);
+            writer.Write((byte)0);
+          
+
+            writer.Write(encodedName.Length);
+            writer.Write(encodedName);
+            writer.Write(encodedSymbol.Length);
+            writer.Write(encodedSymbol);
+            writer.Write(encodedUri.Length);
+            writer.Write(encodedUri);
+            writer.Write((ushort)parameters.sellerFeeBasisPoints);
+
+            if (parameters.creators == null || parameters.creators?.Count < 1)
+            {
+                writer.Write((byte)0); //Option()
+            }
+            else
+            {
+                writer.Write((byte)1);
+                writer.Write(parameters.creators.Count);
+                foreach (Creator c in parameters.creators)
+                {
+                    byte[] encodedCreator = c.Encode();
+                    writer.Write(encodedCreator);
+                }
+            }
+        
+       
+            writer.Write(isMutable);
+            
+            return buffer.ToArray();
+        }
+ 
+        /// <summary>
+        /// Make encodings for CreateMetadataAccountV3 instruction
+        /// </summary>
+        internal static byte[] EncodeCreateMetadataAccountDataV3(MetadataV3 parameters,  bool isMutable = true, ulong collectionDetails = 0)
+        {
             byte[] encodedName = Encoding.UTF8.GetBytes(parameters.name); 
             byte[] encodedSymbol = Encoding.UTF8.GetBytes(parameters.symbol);
             byte[] encodedUri = Encoding.UTF8.GetBytes(parameters.uri);
@@ -127,7 +74,7 @@ namespace Solnet.Metaplex
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) MetadataProgramInstructions.Values.CreateMetadataAccount );
+            writer.Write( (byte)33);
             writer.Write( encodedName.Length );
             writer.Write( encodedName) ;
             writer.Write( encodedSymbol.Length );
@@ -136,39 +83,67 @@ namespace Solnet.Metaplex
             writer.Write( encodedUri );
             writer.Write( (ushort) parameters.sellerFeeBasisPoints);
 
-            if ( parameters.creators == null || parameters.creators?.Count < 1 )
+            if (parameters.creators == null || parameters.creators?.Count < 1)
             {
-                writer.Write( (byte) 0); //Option()
-            } 
-            else 
+                writer.Write((byte)0); // 0 = null | No Creators
+            }
+            else
             {
-                writer.Write( (byte) 1);
-                writer.Write( parameters.creators.Count );
-                foreach ( Creator c in parameters.creators )
+                writer.Write((byte)1);
+                writer.Write(parameters.creators.Count);
+                foreach (Creator c in parameters.creators)
                 {
                     byte[] encodedCreator = c.Encode();
-                    writer.Write( encodedCreator );
+                    writer.Write(encodedCreator);
                 }
-            }            
+            }
+            if(parameters.collection == null)
+            {
+                writer.Write((byte)0); // 0 = null | No Collection link
+            }
+            else
+            {
+                writer.Write((byte)1);
+                writer.Write(parameters.collection.Encode());
+            }
+            if(parameters.uses == null)
+            {
+                writer.Write((byte)0); // 0 = null | Not consumable
+            }
+            else
+            {
+                writer.Write((byte)1);       
+                writer.Write((byte)parameters.uses.useMethod);
+                writer.Write((ulong)parameters.uses.remaining);
+                writer.Write((ulong)parameters.uses.total);
 
+            }
+            
             writer.Write(isMutable);
 
+            if(collectionDetails == 0)
+            {
+                writer.Write((byte)0); // 0 = null | No collection details
+            }
+            else
+            {
+                writer.Write((byte)1);
+                writer.Write((byte)0);// collection detail size sits in an array - this byte defines its position | should always be 0
+                writer.Write((ulong)collectionDetails); //collection details size of V1 
+                
+            }
             return buffer.ToArray();
         }
         
         /// <summary>
         /// Make encodings for UpdateMetadata instruction
         /// </summary>        
-        internal static byte[] EncodeUpdateMetadataData (
-            MetadataParameters parameters = null, 
-            PublicKey newUpdateAuthority = null , 
-            bool? primarySaleHappend = null
-        )
+        internal static byte[] EncodeUpdateMetadataData (MetadataV1 parameters = null,  PublicKey newUpdateAuthority = null , bool? primarySaleHappend = null)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) MetadataProgramInstructions.Values.UpdateMetadataAccount );
+            writer.Write( (byte) MetadataProgramDiscriminatorStruct.Values.UpdateMetadataAccount );
 
             if ( parameters is not null )
             {
@@ -187,10 +162,11 @@ namespace Solnet.Metaplex
 
                 writer.Write( (ushort) parameters.sellerFeeBasisPoints);
 
-                if ( parameters.creators == null || parameters.creators?.Count < 1 )
+                if (parameters.creators == null || parameters.creators?.Count < 1)
                 {
-                    writer.Write( (byte)0 ); //Option()
-                } else 
+                    writer.Write((byte)0); //Option()
+                } 
+                else 
                 {
                     writer.Write( (byte)1 );
                     writer.Write( parameters.creators.Count );
@@ -200,12 +176,12 @@ namespace Solnet.Metaplex
                         writer.Write( encodedCreator );
                     }
                 }
-            }else
+            }
+            else
             {
                 writer.Write((byte)0);
             }
            
-
             if ( newUpdateAuthority is not null )
             {
                 writer.Write((byte)1);
@@ -237,7 +213,7 @@ namespace Solnet.Metaplex
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write((byte)MetadataProgramInstructions.Values.CreateMasterEdition);
+            writer.Write((byte)MetadataProgramDiscriminatorStruct.Values.CreateMasterEdition);
 
             if ( maxSupply == null ){
                 writer.Write(new byte[] { 0 }); //Option<>
@@ -256,19 +232,14 @@ namespace Solnet.Metaplex
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write((byte)MetadataProgramInstructions.Values.MintNewEditionFromMasterEditionViaToken);
+            writer.Write((byte)MetadataProgramDiscriminatorStruct.Values.MintNewEditionFromMasterEditionViaToken);
             writer.Write(edition);
 
             return buffer.ToArray();
         }
 
 
-        internal static void DecodeCreateMetadataAccountData( 
-            DecodedInstruction decodedInstruction, 
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys, 
-            byte[] keyIndices
-            )
+        internal static void DecodeCreateMetadataAccountData(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,IList<PublicKey> keys, byte[] keyIndices)
         {
             int offset = 0;
 
@@ -284,9 +255,9 @@ namespace Solnet.Metaplex
             string symbol;
             string uri;
 
-            int nameLength = data.GetBorshString( 1 , out name );
-            int symbolLength = data.GetBorshString( 1 + nameLength , out symbol );
-            int uriLength = data.GetBorshString( 1 + nameLength + symbolLength , out uri );
+            int nameLength = data.GetBorshString(1 , out name );
+            int symbolLength = data.GetBorshString(1 + nameLength , out symbol );
+            int uriLength = data.GetBorshString(1 + nameLength + symbolLength , out uri );
             
             int sellerFeeBasisPoints = data.GetU16(1 + nameLength + symbolLength + uriLength);
             
@@ -309,9 +280,9 @@ namespace Solnet.Metaplex
                 decodedInstruction.Values.Add("creators", creators);
                 offset = offset + numOfCreators * Creator.length;
             }
-
-            decodedInstruction.Values.Add("isMutable", data.GetU8( data.Length-1 ));
             
+            decodedInstruction.Values.Add("isMutable", data.GetU8(data.Length - 1));
+
         }
 
         internal static IList<Creator> DecodeCreators ( ReadOnlySpan<byte> creatorsVector )
@@ -332,12 +303,7 @@ namespace Solnet.Metaplex
             return creators;
         }
 
-        internal static void DecodeUpdateMetadataAccountData(
-            DecodedInstruction decodedInstruction,
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys,
-            byte[] keyIndices
-            )
+        internal static void DecodeUpdateMetadataAccountData(DecodedInstruction decodedInstruction,ReadOnlySpan<byte> data,IList<PublicKey> keys,byte[] keyIndices)
         {
             decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("update authority key", keys[keyIndices[1]]);
@@ -399,12 +365,7 @@ namespace Solnet.Metaplex
             } 
         }
 
-        internal static void DecodeCreateMasterEdition(
-            DecodedInstruction decodedInstruction,
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys,
-            byte[] keyIndices
-            )
+        internal static void DecodeCreateMasterEdition(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys, byte[] keyIndices)
         {
             decodedInstruction.Values.Add("master edition key", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("mint key", keys[keyIndices[1]]);
@@ -425,45 +386,25 @@ namespace Solnet.Metaplex
             }
         }
 
-        internal static void DecodeSignMetada(
-            DecodedInstruction decodedInstruction,
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys,
-            byte[] keyIndices
-            )
+        internal static void DecodeSignMetada(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys,byte[] keyIndices)
         {
             decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("creator key", keys[keyIndices[1]]);
         }
 
-        internal static void DecodePuffMetada(
-            DecodedInstruction decodedInstruction,
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys,
-            byte[] keyIndices
-            )
+        internal static void DecodePuffMetada(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data, IList<PublicKey> keys,byte[] keyIndices)
         {
             decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
         }
 
-        internal static void DecodeUpdatePrimarySaleHappendViaToken(
-            DecodedInstruction decodedInstruction,
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys,
-            byte[] keyIndices
-            )
+        internal static void DecodeUpdatePrimarySaleHappendViaToken(DecodedInstruction decodedInstruction,ReadOnlySpan<byte> data,IList<PublicKey> keys,byte[] keyIndices)
         {
             decodedInstruction.Values.Add("metadata key", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("owner key", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("token account key", keys[keyIndices[2]]);
         }
         
-        internal static void DecodeMintNewEditionFromMasterEditionViaToken(
-            DecodedInstruction decodedInstruction,
-            ReadOnlySpan<byte> data,
-            IList<PublicKey> keys,
-            byte[] keyIndices
-            )
+        internal static void DecodeMintNewEditionFromMasterEditionViaToken(DecodedInstruction decodedInstruction, ReadOnlySpan<byte> data,IList<PublicKey> keys,byte[] keyIndices)
         {
             decodedInstruction.Values.Add("new metadata key", keys[keyIndices[0]]);
             decodedInstruction.Values.Add("new edition", keys[keyIndices[1]]);
