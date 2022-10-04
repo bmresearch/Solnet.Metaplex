@@ -2,9 +2,9 @@
 
 
 
-namespace Solnet.Metaplex 
+namespace Solnet.Metaplex
 {
-    internal class MetadataAccountLayout 
+    internal class MetadataAccountLayout
     {
         internal const int MethodOffset = 0;
 
@@ -16,6 +16,9 @@ namespace Solnet.Metaplex
 
         internal const int feeBasisOffset = 319;
 
-        internal const int creatorsOffset = 322;
+        internal const int creatorSwitchOffset = 320;//boolean either 0 or 1
+
+        internal const int creatorsCountOffset = 321; //beginning of creator byte stream if creators exist
+
     }
 }

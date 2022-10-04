@@ -17,7 +17,7 @@ namespace Solnet.Metaplex
     /// <remarks>
     /// For more information see:
     /// https://github.com/metaplex-foundation/metaplex
-    /// https://www.notion.so/Metaplex-Developer-Guide-afefbc19841744c28587ab948a08cfac
+    /// https://metaplex-foundation.github.io/metaplex-program-library/docs/token-metadata/index.html
     /// </remarks>
     /// </summary>
     public static class MetadataProgram

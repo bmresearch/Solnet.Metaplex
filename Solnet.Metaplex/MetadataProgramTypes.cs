@@ -22,12 +22,12 @@ namespace Solnet.Metaplex
         /// <summary>
         ///  remaining uses - usually the same as total on creation
         /// </summary>
-        public ulong remaining;
+        public string remaining;
 
         /// <summary>
         ///  total NFT uses
         /// </summary>
-        public ulong total;
+        public string total;
 
         /// <summary>
         /// Uses Constructor
@@ -35,7 +35,7 @@ namespace Solnet.Metaplex
         /// <param name="_useMethod"> useMethod</param>
         /// <param name="_remaining"> remaining</param>
         /// <param name="_total"> total</param>
-        public Uses(byte _useMethod, ulong _remaining, ulong _total)
+        public Uses(byte _useMethod, string _remaining, string _total)
         {
             useMethod = _useMethod;
             remaining = _remaining;
