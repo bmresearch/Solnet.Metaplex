@@ -13,8 +13,8 @@ jobs:
       - name: Get the sources
         uses: actions/checkout@v3
       - name: Run the build script
-        uses: cake-build/cake-action@v1
+        uses: cake-build/cake-action@v2
         with:
           script-path: build.cake
-          target: Report
+          target: Publish
           cake-bootstrap: true
