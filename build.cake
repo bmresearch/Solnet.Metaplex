@@ -1,6 +1,6 @@
-#module nuget:?package=Cake.DotNetTool.Module&version=2.2.0
+#module nuget:?package=Cake.DotNetTool.Module&version=0.4.0
 #addin nuget:?package=Cake.Coverlet&version=2.5.4
-#tool dotnet:?package=dotnet-reportgenerator-globaltool&version=5.1.10
+#tool dotnet:?package=dotnet-reportgenerator-globaltool&version=4.8.7
 
 var testProjectsRelativePaths = new string[]
 {
@@ -42,11 +42,44 @@ Task("Build")
         });
     });
 
+    
+Task("Test")
+    .IsDependentOn("Build")
+    .Does(() => {
+    
+        var coverletSettings = new CoverletSettings {
+            CollectCoverage = true,
+            CoverletOutputDirectory = coverageFolder,
+            CoverletOutputName = coverageFileName,
+            CoverletOutputFormat = CoverletOutputFormat.lcov
+        };
 
+        var testSettings = new DotNetCoreTestSettings
+        {
+            NoRestore = true,
+            Configuration = configuration,
+            NoBuild = true,
+            ArgumentCustomization = args => args.Append($"--logger trx"),
+        };
+
+        DotNetCoreTest(testProjectsRelativePaths[0], testSettings, coverletSettings);
+    });
+
+
+Task("Report")
+    .IsDependentOn("Test")
+    .Does(() =>
+{
+    var reportSettings = new ReportGeneratorSettings
+    {
+        ArgumentCustomization = args => args.Append($"-reportTypes:{reportTypes}")
+    };
+    ReportGenerator(coverageFilePath, Directory(coverageFolder), reportSettings);
+});
 
 
 Task("Publish")
-    .IsDependentOn("Build")
+    .IsDependentOn("Report")
     .Does(() => {
         DotNetCorePublish(solutionFolder, new DotNetCorePublishSettings
         {

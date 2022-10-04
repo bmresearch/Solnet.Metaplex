@@ -15,7 +15,7 @@ jobs:
         uses: cake-build/cake-action@v1
         with:
           script-path: build.cake
-          target: Pack
+          target: Build
           cake-bootstrap: true
       - name: Build Changelog
         id: build_changelog
