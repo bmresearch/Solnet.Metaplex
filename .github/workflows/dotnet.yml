@@ -16,10 +16,10 @@ jobs:
         uses: cake-build/cake-action@v1
         with:
           script-path: build.cake
-          target: Pack
+          target: Report
           cake-bootstrap: true
       - name: Publish coverage report to coveralls.io
         uses: coverallsapp/github-action@v1.1.2
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: code_coverage/results.info 
