@@ -187,7 +187,7 @@ namespace Solnet.Metaplex
 
         /// <summary> Constructor </summary>
         /// <param name="accInfo"> Soloana account info </param>
-        /// /// <param name="MetadataVersion"> Metadata Account Version</param>
+        /// /// <param name="MetadataVersion"> Metadata Account Version - Either 1 or 3</param>
         public MetadataAccount(AccountInfo accInfo, int MetadataVersion)
         {
             try
@@ -197,7 +197,6 @@ namespace Solnet.Metaplex
                     this.metadataV1 = ParseDataV1(accInfo.Data);
                 if (MetadataVersion == 3)
                     this.metadataV3 = ParseDataV3(accInfo.Data);
-
                 var data = Convert.FromBase64String(accInfo.Data[0]);
                 this.updateAuthority = new PublicKey(data[1..33]);
                 this.mint = new PublicKey(data[33..65]);
