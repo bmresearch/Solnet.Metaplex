@@ -42,44 +42,11 @@ Task("Build")
         });
     });
 
-    
-Task("Test")
-    .IsDependentOn("Build")
-    .Does(() => {
-    
-        var coverletSettings = new CoverletSettings {
-            CollectCoverage = true,
-            CoverletOutputDirectory = coverageFolder,
-            CoverletOutputName = coverageFileName,
-            CoverletOutputFormat = CoverletOutputFormat.lcov
-        };
 
-        var testSettings = new DotNetCoreTestSettings
-        {
-            NoRestore = true,
-            Configuration = configuration,
-            NoBuild = true,
-            ArgumentCustomization = args => args.Append($"--logger trx"),
-        };
-
-        DotNetCoreTest(testProjectsRelativePaths[0], testSettings, coverletSettings);
-    });
-
-
-Task("Report")
-    .IsDependentOn("Test")
-    .Does(() =>
-{
-    var reportSettings = new ReportGeneratorSettings
-    {
-        ArgumentCustomization = args => args.Append($"-reportTypes:{reportTypes}")
-    };
-    ReportGenerator(coverageFilePath, Directory(coverageFolder), reportSettings);
-});
 
 
 Task("Publish")
-    .IsDependentOn("Report")
+    .IsDependentOn("Build")
     .Does(() => {
         DotNetCorePublish(solutionFolder, new DotNetCorePublishSettings
         {
