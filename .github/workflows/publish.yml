@@ -15,19 +15,8 @@ jobs:
         uses: cake-build/cake-action@v1
         with:
           script-path: build.cake
-          target: Pack
+          target: Report
           cake-bootstrap: true
-      - name: Publish on version change
-        id: publish_nuget
-        uses: bmresearch/publish-nuget@master
-        with:
-          PROJECT_FILE_PATH: Solnet.Metaplex/Solnet.Metaplex.csproj
-          PACKAGE_NAME: Solnet.Metaplex
-          VERSION_FILE_PATH: SharedBuildProperties.props
-          VERSION_REGEX: ^\s*<Version>(.*)<\/Version>\s*$
-          TAG_FORMAT: v*
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          INCLUDE_SYMBOLS: true
       - name: Build Changelog
         id: build_changelog
         uses: mikepenz/release-changelog-builder-action@v1
