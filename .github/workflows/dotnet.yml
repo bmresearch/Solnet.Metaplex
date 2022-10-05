@@ -11,15 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get the sources
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
       - name: Run the build script
         uses: cake-build/cake-action@v1
         with:
           script-path: build.cake
-          target: Report
+          target: Build
           cake-bootstrap: true
-      - name: Publish coverage report to coveralls.io
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: code_coverage/results.info 

@@ -6,9 +6,6 @@
     <a href="https://github.com/bmresearch/Solnet.Metaplex/actions/workflows/dotnet.yml">
         <img src="https://github.com/bmresearch/Solnet.Metaplex/actions/workflows/dotnet.yml/badge.svg"
             alt="GitHub Workflow Build Status (master)" ></a>
-    <a href="https://coveralls.io/github/bmresearch/Solnet.Metaplex?branch=master">
-        <img src="https://coveralls.io/repos/github/bmresearch/Solnet.Metaplex/badge.svg?branch=master" 
-            alt="Coverage Status" ></a>
     <a href="">
         <img src="https://img.shields.io/github/license/bmresearch/solnet.Metaplex?style=flat-square"
             alt="Code License"></a>

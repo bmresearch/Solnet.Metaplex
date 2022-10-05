@@ -114,8 +114,8 @@ namespace Solnet.Metaplex
             {
                 writer.Write((byte)1);       
                 writer.Write((byte)parameters.uses.useMethod);
-                writer.Write((ulong)parameters.uses.remaining);
-                writer.Write((ulong)parameters.uses.total);
+                writer.Write((ulong)Convert.ToUInt64(parameters.uses.remaining));
+                writer.Write((ulong)Convert.ToUInt64(parameters.uses.total));
 
             }
             
