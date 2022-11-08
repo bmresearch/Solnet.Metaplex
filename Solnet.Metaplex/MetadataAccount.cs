@@ -7,6 +7,8 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
+using Solnet.Metaplex.Json;
+using Newtonsoft.Json;
 
 namespace Solnet.Metaplex
 {
@@ -72,7 +74,7 @@ namespace Solnet.Metaplex
         public bool isMutable;
         ///<summary> Edition Type </summary>
         public int editionNonce;
-        ///<summary> Token Standard - Fungible / non-fungible </summary>
+        ///<summary> primarySaleHappened </summary>
         public bool primarySaleHappened;
         ///<summary> metadata json </summary>
         public string metadata;
@@ -90,21 +92,6 @@ namespace Solnet.Metaplex
             primarySaleHappened = _primarySaleHappened;
         }
 
-        /// <summary> Tries to get a json file from the uri </summary>
-        public async Task<string> FetchMetadata()
-        {
-            if (uri is null)
-                return null;
-
-            if (metadata is null)
-            {
-                using var http = new HttpClient();
-                var res = await http.GetStringAsync(uri);
-                metadata = res;
-            }
-
-            return metadata;
-        }
     }
     /// <summary> Metadata Onchain DataV3 structure  </summary>
     public class OnChainDataV3
@@ -149,21 +136,7 @@ namespace Solnet.Metaplex
             tokenStandard = _tokenStandard;
         }
 
-        /// <summary> Tries to get a json file from the uri </summary>
-        public async Task<string> FetchMetadata()
-        {
-            if (uri is null)
-                return null;
 
-            if (metadata is null)
-            {
-                using var http = new HttpClient();
-                var res = await http.GetStringAsync(uri);
-                metadata = res;
-            }
-
-            return metadata;
-        }
     }
     /// <summary> Metadata account class V2 </summary>
     public class MetadataAccount
@@ -178,6 +151,8 @@ namespace Solnet.Metaplex
         public OnchainDataV1 metadataV1;
         /// <summary> data struct </summary>
         public OnChainDataV3 metadataV3;
+        /// <summary> Off Chain Metadata </summary>
+        public MetaplexTokenStandard offchainData;
         /// <summary> version of metadata. V1 or V3</summary>
         public int MetadataVersion;
         /// <summary> standard Solana account info </summary>
@@ -188,25 +163,47 @@ namespace Solnet.Metaplex
         /// <summary> Constructor </summary>
         /// <param name="accInfo"> Soloana account info </param>
         /// /// <param name="MetadataVersion"> Metadata Account Version - Either 1 or 3</param>
-        public MetadataAccount(AccountInfo accInfo, int MetadataVersion)
+        public MetadataAccount(AccountInfo accInfo, int _MetadataVersion)
         {
             try
             {
-                this.owner = new PublicKey(accInfo.Owner);
-                if(MetadataVersion == 1)
-                    this.metadataV1 = ParseDataV1(accInfo.Data);
+                owner = new PublicKey(accInfo.Owner);
+                MetadataVersion = _MetadataVersion;
+                if (MetadataVersion == 1)
+                    metadataV1 = ParseDataV1(accInfo.Data);
                 if (MetadataVersion == 3)
-                    this.metadataV3 = ParseDataV3(accInfo.Data);
+                    metadataV3 = ParseDataV3(accInfo.Data);
                 var data = Convert.FromBase64String(accInfo.Data[0]);
-                this.updateAuthority = new PublicKey(data[1..33]);
-                this.mint = new PublicKey(data[33..65]);
+                var UA = data.AsSpan(1, 32);
+                updateAuthority = new PublicKey(UA);
+                if (MetadataVersion == 1)
+                    offchainData = FetchOffChainMetadata(1);
+                if (MetadataVersion == 3)
+                    offchainData = FetchOffChainMetadata(3);
+                var _mint = data.AsSpan(33, 32);
+                mint = new PublicKey(_mint);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
         }
+        /// <summary> Tries to get a json file from the uri </summary>
+        public MetaplexTokenStandard FetchOffChainMetadata(int version)
+        {
+            MetaplexTokenStandard metadata = null;
+            string assetURI = metadataV3.uri;
+            if (version == 1)
+                assetURI = metadataV1.uri;
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
+                var offsiteTokenRetrieval = httpClient.GetStringAsync(new Uri(assetURI)).Result;
+                MetaplexTokenStandard _Metadata = JsonConvert.DeserializeObject<MetaplexTokenStandard>(offsiteTokenRetrieval);
+            }
 
+            return metadata;
+        }
         /// <summary> Parse version 1 Data used for V1 metadata accounts </summary>
         /// <param name="data"> data </param>
         /// <returns> data struct </returns>
@@ -234,7 +231,7 @@ namespace Solnet.Metaplex
                 if (hasCreators == true)
                 {
                     creators = MetadataProgramData.DecodeCreators(binData.GetSpan(MetadataAccountLayout.creatorsCountOffset + 5, numOfCreators * (32 + 1 + 1)));
-                    o = MetadataAccountLayout.creatorsCountOffset + 5 + (numOfCreators * (32 + 1 + 1));
+                    o = MetadataAccountLayout.creatorsCountOffset + 5 + numOfCreators * (32 + 1 + 1);
                 }
                 else
                 {
@@ -287,8 +284,8 @@ namespace Solnet.Metaplex
                 if (hasCreators == true)
                 {
                     creators = MetadataProgramData.DecodeCreators(binData.GetSpan(MetadataAccountLayout.creatorsCountOffset + 5, numOfCreators * (32 + 1 + 1)));
-                    o = MetadataAccountLayout.creatorsCountOffset + 5 + (numOfCreators * (32 + 1 + 1));
-                  
+                    o = MetadataAccountLayout.creatorsCountOffset + 5 + numOfCreators * (32 + 1 + 1);
+
                 }
                 else
                 {
@@ -307,7 +304,7 @@ namespace Solnet.Metaplex
                 o++;
                 bool hasCollectionlink = binData.GetBool(o);
                 o++;
-               
+
                 Collection collectionLink = null;
                 if (hasCollectionlink == true)
                 {
@@ -315,33 +312,33 @@ namespace Solnet.Metaplex
                     o++;
                     var key = binData.GetPubKey(o);
                     o = o + 32;
-                    
-                    collectionLink = new Collection(key, verified); 
+
+                    collectionLink = new Collection(key, verified);
                 }
                 else
                 {
                     o++;
                 }
-              
+
                 bool isConsumable = binData.GetBool(o);
                 Uses usesInfo = null;
                 if (isConsumable == true)
                 {
-                   o++;
-                   var useMethodENUM = binData.GetBytes(o, 1)[0];
-                   o++;
-                   var remaining = binData.GetU64(o).ToString("x");
-                   o = o + 8;
-                   var total = binData.GetU64(o).ToString("x");
-                   o = o + 8;
-                   o++;
-                   usesInfo = new Uses(useMethodENUM, remaining, total);
+                    o++;
+                    var useMethodENUM = binData.GetBytes(o, 1)[0];
+                    o++;
+                    var remaining = binData.GetU64(o).ToString("x");
+                    o = o + 8;
+                    var total = binData.GetU64(o).ToString("x");
+                    o = o + 8;
+                    o++;
+                    usesInfo = new Uses(useMethodENUM, remaining, total);
                 }
                 else
                 {
                     o++;
                 }
-              
+
                 name = name.TrimEnd('\0');
                 symbol = symbol.TrimEnd('\0');
                 uri = uri.TrimEnd('\0');
@@ -382,7 +379,8 @@ namespace Solnet.Metaplex
 
                     if (readdata.Length == 165)
                     {
-                        mintAccount = new PublicKey(readdata[..32]);
+                        byte[] _mint = readdata.AsSpan(0, 32).ToArray();
+                        mintAccount = new PublicKey(_mint);
                     }
                     else
                     {
@@ -391,7 +389,7 @@ namespace Solnet.Metaplex
 
                     PublicKey metadataAddress;
                     byte nonce;
-                    PublicKey.TryFindProgramAddress(new List<byte[]>() 
+                    PublicKey.TryFindProgramAddress(new List<byte[]>()
                         {
                             Encoding.UTF8.GetBytes("metadata"),
                             MetadataProgram.ProgramIdKey,
