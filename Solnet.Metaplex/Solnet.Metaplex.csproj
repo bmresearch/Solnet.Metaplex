@@ -21,6 +21,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Solnet.Extensions" Version="6.1.0" />
         <PackageReference Include="Solnet.Keystore" Version="6.1.0" />
         <PackageReference Include="Solnet.Programs" Version="6.1.0" />
