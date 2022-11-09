@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get the sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v1
       - name: Run the build script
         uses: cake-build/cake-action@v1
         with:
