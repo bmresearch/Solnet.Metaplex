@@ -1,14 +1,9 @@
+using Solnet.Programs;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc.Models;
-using Solnet.Rpc.Utilities;
 using Solnet.Wallet;
-using Solnet.Wallet.Utilities;
-using Solnet.Programs;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Buffers.Binary;
-using System.Linq;
 
 namespace Solnet.Metaplex
 {
@@ -59,16 +54,17 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = new byte[] { 
-                    (byte) VaultProgramInstructions.Values.InitVault,
+                Data = new byte[] {
+                    (byte) VaultInstructionBook.InstructionID.InitVault,
                     Convert.ToByte( allowFurtherShareCreation )
                 }
             };
         }
-        
+
         /// <summary>
         /// Adds a token to a inactive vault
         /// </summary>
@@ -104,10 +100,11 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = VaultProgramData.EncodeAddTokenToInactiveVault( amount )
+                Data = VaultProgramData.EncodeAddTokenToInactiveVault(amount)
             };
         }
 
@@ -139,10 +136,11 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( TokenProgram.ProgramIdKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = VaultProgramData.EncodeActivateVault( numberOfInitialShares )
+                Data = VaultProgramData.EncodeActivateVault(numberOfInitialShares)
             };
         }
 
@@ -191,10 +189,11 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = new byte [] { (byte) VaultProgramInstructions.Values.CombineVault }
+                Data = new byte[] { (byte)VaultInstructionBook.InstructionID.CombineVault }
             };
         }
 
@@ -229,10 +228,11 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = new byte[] { (byte) VaultProgramInstructions.Values.RedeemShares }
+                Data = new byte[] { (byte)VaultInstructionBook.InstructionID.RedeemShares }
             };
         }
 
@@ -269,7 +269,8 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = VaultProgramData.EncodeWithdrawTokenFromSafetyDepositBox(Amount)
@@ -303,7 +304,8 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = VaultProgramData.EncodeMintFractionalShares(Amount)
@@ -338,7 +340,8 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = VaultProgramData.EncodeWithdrawSharesFromTreasury(Amount)
@@ -373,7 +376,8 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( SysVars.RentKey, false)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = VaultProgramData.EncodeAddSharesToTreasury(Amount)
@@ -397,7 +401,8 @@ namespace Solnet.Metaplex
                 AccountMeta.Writable( ExternalPriceAccount, true)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
                 Data = VaultProgramData.EncodeUpdateExternalPriceAccount(PricePerShare, PriceMint, AllowedToCombine)
@@ -421,10 +426,11 @@ namespace Solnet.Metaplex
                 AccountMeta.ReadOnly( NewAuthority, true)
             };
 
-            return new TransactionInstruction{
+            return new TransactionInstruction
+            {
                 ProgramId = ProgramIdKey.KeyBytes,
                 Keys = keys,
-                Data = new byte[] { (byte) VaultProgramInstructions.Values.SetAuthority }
+                Data = new byte[] { (byte)VaultInstructionBook.InstructionID.SetAuthority }
             };
         }
 
@@ -436,20 +442,20 @@ namespace Solnet.Metaplex
         /// <param name="keys">The account keys present in the transaction.</param>
         /// <param name="keyIndices">The indices of the account keys for the instruction as they appear in the transaction.</param>
         /// <returns>A decoded instruction.</returns>
-        public static DecodedInstruction Decode( 
-            ReadOnlySpan<byte> data, 
-            IList<PublicKey> keys, 
-            byte[] keyIndices )
+        public static DecodedInstruction Decode(
+            ReadOnlySpan<byte> data,
+            IList<PublicKey> keys,
+            byte[] keyIndices)
         {
             uint instruction = data.GetU8(VaultProgramData.MethodOffset);
 
-            VaultProgramInstructions.Values instructionValue =
-                (VaultProgramInstructions.Values)Enum.Parse(typeof(VaultProgramInstructions.Values), instruction.ToString());
+            VaultInstructionBook.InstructionID instructionValue =
+                (VaultInstructionBook.InstructionID)Enum.Parse(typeof(VaultInstructionBook.InstructionID), instruction.ToString());
 
             DecodedInstruction decodedInstruction = new()
             {
                 PublicKey = ProgramIdKey,
-                InstructionName = VaultProgramInstructions.Names[instructionValue],
+                InstructionName = VaultInstructionBook.Names[instructionValue],
                 ProgramName = ProgramName,
                 Values = new Dictionary<string, object>(),
                 InnerInstructions = new List<DecodedInstruction>()
@@ -457,42 +463,42 @@ namespace Solnet.Metaplex
 
             switch (instructionValue)
             {
-                case VaultProgramInstructions.Values.InitVault:
+                case VaultInstructionBook.InstructionID.InitVault:
                     VaultProgramData.DecodeInitVault(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.AddTokenToInactiveVault:
+                case VaultInstructionBook.InstructionID.AddTokenToInactiveVault:
                     VaultProgramData.DecodeAddTokenToInactiveVault(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.ActivateVault:
+                case VaultInstructionBook.InstructionID.ActivateVault:
                     VaultProgramData.DecodeActivateVault(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.CombineVault:
+                case VaultInstructionBook.InstructionID.CombineVault:
                     VaultProgramData.DecodeCombineVault(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.RedeemShares:
+                case VaultInstructionBook.InstructionID.RedeemShares:
                     VaultProgramData.DecodeRedeemShares(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.WithdrawTokenFromSafetyDepositBox:
+                case VaultInstructionBook.InstructionID.WithdrawTokenFromSafetyDepositBox:
                     VaultProgramData.DecodeWidthdrawTokenFromSafetyDepositBox(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.MintFractionalShares:
+                case VaultInstructionBook.InstructionID.MintFractionalShares:
                     VaultProgramData.DecodeMintFractionalShares(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.WithdrawSharesFromTreasury:
+                case VaultInstructionBook.InstructionID.WithdrawSharesFromTreasury:
                     VaultProgramData.DecodeWidthdrawSharesFromTreasury(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.AddSharesToTreasury:
+                case VaultInstructionBook.InstructionID.AddSharesToTreasury:
                     VaultProgramData.DecodeAddSharesToTreasury(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.UpdateExternalPriceAccount:
+                case VaultInstructionBook.InstructionID.UpdateExternalPriceAccount:
                     VaultProgramData.DecodeUpdateExternalPriceAccount(decodedInstruction, data, keys, keyIndices);
                     break;
-                case VaultProgramInstructions.Values.SetAuthority:
+                case VaultInstructionBook.InstructionID.SetAuthority:
                     VaultProgramData.DecodeSetAuthority(decodedInstruction, data, keys, keyIndices);
                     break;
             }
 
-            return decodedInstruction;   
+            return decodedInstruction;
         }
 
 

@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Solnet.Metaplex.Json
+namespace Solnet.Metaplex.Utilities
 {
     /// <summary> Metaplex Token Standard Offchain JSON Structure class </summary>
     public class MetaplexTokenStandard

@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Solnet.Rpc.Utilities;
-
+using Solnet.Metaplex.NFT.Library;
+using Solnet.Metaplex.NFT;
 
 namespace Solnet.Metaplex.Examples
 {
@@ -20,132 +21,49 @@ namespace Solnet.Metaplex.Examples
         /// <summary>
         /// Run the example.
         /// </summary>
-        public void Run() 
+        public async void Run() 
         {
 
             var client = ClientFactory.GetClient( Cluster.DevNet);
+            var exampleWallet = new Wallet.Wallet(pk);
 
-            var wallet = new Wallet.Wallet(pk);
+            //Get your account either by the wallet or directly from the private key
+            Account ownerAccount = exampleWallet.Account;
+            Account mintAccount = exampleWallet.GetAccount(75);
 
-            Console.WriteLine("Using account public key : {0}", wallet.Account.PublicKey );
+            Console.WriteLine("Using account public key : {0}", ownerAccount.PublicKey );
 
-            var balanceRes = client.GetBalance(wallet.Account.PublicKey);
-            if ( balanceRes.WasSuccessful )
-                Console.WriteLine("Account balance: {0}", balanceRes.Result.Value);
-
-            var mint = wallet.GetAccount(59);
-
-                        //PDA METADATA
-
-            PublicKey metadataAddress;
-            byte nonce;
-            PublicKey.TryFindProgramAddress(
-                new List<byte[]>() {
-                    Encoding.UTF8.GetBytes("metadata"),
-                    MetadataProgram.ProgramIdKey,
-                    mint.PublicKey
-                },
-                MetadataProgram.ProgramIdKey,
-                out metadataAddress,
-                out nonce
-            );
-
-
-            Console.WriteLine($"PDA METADATA: {metadataAddress}");
-
-            //PDA MASTER EDITION
-            PublicKey masterEditionAddress;
-            //int nonce;
-            PublicKey.TryFindProgramAddress(
-                new List<byte[]>() {
-                    Encoding.UTF8.GetBytes("metadata"),
-                    MetadataProgram.ProgramIdKey,
-                    mint.PublicKey,
-                    Encoding.UTF8.GetBytes("edition")
-                },
-                MetadataProgram.ProgramIdKey,
-                out masterEditionAddress,
-                out nonce
-            );
-            Console.WriteLine($"PDA MASTER: {masterEditionAddress}");
-            
-            //CREATORS
-
-            var c1 = new Creator( wallet.Account.PublicKey , 50, true );
-            var c2 = new Creator( wallet.GetAccount(101).PublicKey , 50 , false );
-
-            //DATA
-            var data = new MetadataParameters()
+            //Create the creator list
+            List<Creator> creatorList = new List<Creator>
             {
-                name = "ja sam test",
-                symbol = "ABC",
-                uri = "http://no.op",
-                creators = new List<Creator>() { new Creator( wallet.Account.PublicKey , 100 , true ) } ,
-                sellerFeeBasisPoints = 77
+                new Creator(ownerAccount.PublicKey, 100, true)
             };
 
-            var data2 = new MetadataParameters()
+            //If there is more than one then you can add more
+
+            //creatorList.Add(new Creator(new PublicKey("")))
+
+            Metadata tokenMetadata = new Metadata
             {
-                name = "ti si test",
-                symbol = "CBA",
-                uri = "http://yes.op",
-                creators = new List<Creator>() { c1,c2 } ,
-                sellerFeeBasisPoints = 55
-            };
+                name = "SolNET NFT",
+                symbol = "SOLNET",
+                sellerFeeBasisPoints = 500,
+                uri = "arweave link",
+                creators = creatorList,
 
+                //If your NFT has a parent collection NFT. You can specify it here
+                //collection = new Collection(collectionAddress),
 
-            var blockHash = client.GetRecentBlockHash().Result.Value.Blockhash;
-            var rentMint = client.GetMinimumBalanceForRentExemption(
-                    TokenProgram.MintAccountDataSize,
-                    Rpc.Types.Commitment.Confirmed
-                );
+                uses = new Uses(UseMethod.Single, 5, 5),
 
-            var TX = new TransactionBuilder()
-                .SetFeePayer(wallet.Account.PublicKey)
-                .SetRecentBlockHash(blockHash)
-                .AddInstruction(
-                    SystemProgram.CreateAccount(
-                        wallet.Account.PublicKey,
-                        mint.PublicKey,
-                        rentMint.Result,
-                        TokenProgram.MintAccountDataSize,
-                        TokenProgram.ProgramIdKey
-                    )
-                )
-                .AddInstruction(
-                    TokenProgram.InitializeMint(
-                        mint,
-                        0,
-                        wallet.Account.PublicKey,
-                        wallet.Account.PublicKey
-                    )
-                )
-                .AddInstruction(
-                    MetadataProgram.CreateMetadataAccount(
-                        metadataAddress,
-                        mint,
-                        wallet.Account.PublicKey,
-                        wallet.Account.PublicKey,
-                        wallet.Account.PublicKey,
-                        data,
-                        true,
-                        true
-                    )
-                )
-                // .AddInstruction(
-                //     MetadataProgram.UpdateMetadataAccount(
-                //         new PublicKey(metadataAddress),
-                //         wallet.Account.PublicKey,
-                //         null,
-                //         data2,
-                //         null
-                //     )
-                // )
-                .Build(new List<Account> { wallet.Account , mint});
+                //If your NFT is programmable and has a ruleset then specify it here
+                //programmableConfig = new ProgrammableConfig(rulesetAddress)
+            }; 
 
-            var simTX = client.SimulateTransactionAsync(TX).Result;
-
-            Console.WriteLine(simTX.RawRpcResponse);
+            //Easily create any type of metadata token. Any nullable parameters can be overrided to provide the data needed to create complex metadata tokens or use legacy instructions
+            MetaplexClient metaplexClient = new MetaplexClient(client);
+           
+            await metaplexClient.CreateNFT(ownerAccount, mintAccount, TokenStandard.NonFungible, tokenMetadata, false, true);
         }
 
     }
