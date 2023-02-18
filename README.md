@@ -130,6 +130,7 @@ We encourage everyone to contribute, submit issues, PRs, discuss. Every kind of 
 ## Contributors
 
 * **Mariomatic** - *Maintainer* - [mariomatic](https://github.com/mariomatic)
+* **BifrostTitan** - *Contributer* - [bifrosttitan](https://github.com/bifrosttitan)
 
 See also the list of [contributors](https://github.com/bmresearch/Solnet.Metaplex/contributors) who participated in this project.
 
