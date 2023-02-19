@@ -5,7 +5,7 @@ using System;
 using System.Text;
 
 
-namespace Solnet.Metaplex
+namespace Solnet.Metaplex.NFT.Library
 {
 
 

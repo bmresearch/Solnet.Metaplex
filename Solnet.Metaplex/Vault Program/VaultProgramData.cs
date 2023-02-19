@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 
 
-namespace Solnet.Metaplex
+namespace Solnet.Metaplex.NFT.Library
 {
 
     internal class VaultProgramData

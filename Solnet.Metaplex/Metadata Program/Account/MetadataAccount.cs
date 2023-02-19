@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Solnet.Metaplex.Utilities;
+using Solnet.Metaplex.Utilities.Json;
 using Solnet.Programs.Utilities;
 using Solnet.Rpc;
 using Solnet.Rpc.Models;
@@ -94,13 +95,19 @@ namespace Solnet.Metaplex.NFT.Library
                 int symbolLength = binData.GetBorshString(MetadataPacketLayout.symbolOffset, out string symbol);
                 int uriLength = binData.GetBorshString(MetadataPacketLayout.uriOffset, out string uri);
                 uint sellerFee = binData.GetU16(MetadataPacketLayout.feeBasisOffset);
-                bool hasCreators = binData.GetBool(MetadataPacketLayout.creatorSwitchOffset);
+
+                //bool hasCreators = binData.GetBool(MetadataPacketLayout.creatorSwitchOffset);
                 byte numOfCreators = binData.GetU8(MetadataPacketLayout.creatorsCountOffset);
+
                 IList<Creator> creators = null;
                 Uses usesInfo = null;
                 Collection collectionLink = null;
                 ProgrammableConfig programmableconfig = null;
                 int o = 0;
+                bool hasCreators = true;
+
+                if (binData.Length < MetadataPacketLayout.creatorsCountOffset + 5 + numOfCreators * (32 + 1 + 1))
+                    hasCreators = false;
 
                 if (hasCreators == true)
                 {
@@ -184,14 +191,14 @@ namespace Solnet.Metaplex.NFT.Library
             }
         }
 
-        /// <summary> Tries to parse a metadata account </summary>
+        /// <summary>GetAccount Method Retrieves the metadata of a token including both onchain and offchain data</summary>
         /// <param name="client"> solana rpcclient </param>
-        /// <param name="walletAddress"> public key of a account to parse </param>
+        /// <param name="tokenAddress"> public key of a account to parse </param>
         /// <returns> Metadata account </returns>
         /// <remarks> it will try to find a metadata even from a token associated account </remarks>
-        async public static Task<MetadataAccount> GetAccount(IRpcClient client, PublicKey walletAddress)
+        async public static Task<MetadataAccount> GetAccount(IRpcClient client, PublicKey tokenAddress)
         {
-            var accInfoResponse = await client.GetAccountInfoAsync(walletAddress.Key);
+            var accInfoResponse = await client.GetAccountInfoAsync(tokenAddress.Key);
 
             if (accInfoResponse.WasSuccessful)
             {
@@ -214,7 +221,7 @@ namespace Solnet.Metaplex.NFT.Library
                     }
                     else
                     {
-                        mintAccount = walletAddress;
+                        mintAccount = tokenAddress;
                     }
 
                     //Loops back & handles it as a metadata address rather than a token account to retrieve metadata

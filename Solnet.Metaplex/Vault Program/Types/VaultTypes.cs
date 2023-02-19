@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Solnet.Metaplex
+namespace Solnet.Metaplex.NFT.Library
 {
     /// <summary>
     /// Vault Key Enum

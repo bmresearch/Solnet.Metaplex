@@ -5,7 +5,7 @@ using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
 
-namespace Solnet.Metaplex
+namespace Solnet.Metaplex.NFT.Library
 {
     ///
     public static class VaultProgram

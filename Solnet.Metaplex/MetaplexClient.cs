@@ -187,6 +187,15 @@ namespace Solnet.Metaplex.NFT
             return tx;
 
         }
+        /// <summary>
+        /// Retrieve and view token metadata as a Metadata Account object
+        /// </summary>
+        /// <param name="tokenAddress"></param>
+        /// <returns></returns>
+        public async Task<MetadataAccount> RetrieveTokenMetadata(PublicKey tokenAddress)
+        {
+            return await MetadataAccount.GetAccount(RpcClient, tokenAddress);
+        }
     }
 }
 
