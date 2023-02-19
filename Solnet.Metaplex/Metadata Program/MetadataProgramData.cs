@@ -491,7 +491,6 @@ namespace Solnet.Metaplex.NFT.Library
             decodedInstruction.Values.Add("token program id", keys[keyIndices[11]]);
             decodedInstruction.Values.Add("system program id", keys[keyIndices[12]]);
             decodedInstruction.Values.Add("system program rent", keys[keyIndices[13]]);
-
             decodedInstruction.Values.Add("edition number", data.GetU64(1));
         }
 

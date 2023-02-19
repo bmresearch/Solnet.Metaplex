@@ -38,17 +38,17 @@ namespace Solnet.Metaplex.NFT
         /// <param name="mintAccount"> Mint Account - The token account that will become the mint account once the mint is initialized </param>
         /// <param name="tokenStandard"> Token Standard - Required to create a specific type of token. Semi-fungible, fungible, non-fungible or programmable.</param>
         /// <param name="metaData"> Metadata Objec that contains all the on-chain data including the off-chain data uri</param>
-        /// <param name="isMasterEdition"></param>
-        /// <param name="isMutable"></param>
-        /// <param name="metadataVersion"></param>
-        /// <param name="_Authority"></param>
-        /// <param name="_UpdateAuthority"></param>
-        /// <param name="_payerAddress"></param>
-        /// <param name="delegateAddress"></param>
-        /// <param name="delegateRole"></param>
-        /// <param name="UpdateAuthorityIsSigner"></param>
-        /// <param name="collectionDetails"></param>
-        /// <param name="maxSupply"></param>
+        /// <param name="isMasterEdition"> Is Masteredition - true or false </param>
+        /// <param name="isMutable"> Is updatable - true or false</param>
+        /// <param name="metadataVersion"> Metadataversion used to access different versions of the metadata instructions</param>
+        /// <param name="_Authority"> Authority Address - Optional - ownerAccount by default</param>
+        /// <param name="_UpdateAuthority"> Update Authority - Optional - owneraccount by default</param>
+        /// <param name="_payerAddress">Fee Payer Address - Optional - ownerAccount by default</param>
+        /// <param name="delegateAddress">Delegate address - Optional</param>
+        /// <param name="delegateRole">Delegate role - optional - required if delegate address is used</param>
+        /// <param name="UpdateAuthorityIsSigner">Is the update authority a signer? True by default as the owneraccount</param>
+        /// <param name="collectionDetails">Collection details data</param>
+        /// <param name="maxSupply">Max supply of a master edition token</param>
         /// <returns></returns>
         public async Task<RequestResult<string>> CreateNFT(Account ownerAccount, Account mintAccount, TokenStandard tokenStandard, Metadata metaData, bool isMasterEdition, bool isMutable, MetadataVersion metadataVersion = MetadataVersion.V4, PublicKey _Authority = null, Account _UpdateAuthority = null, PublicKey _payerAddress = null, PublicKey delegateAddress = null, MetadataDelegateRole delegateRole = MetadataDelegateRole.Update, bool UpdateAuthorityIsSigner = true, ulong collectionDetails = 0, int maxSupply = 0)
         {
@@ -131,18 +131,17 @@ namespace Solnet.Metaplex.NFT
         /// <summary>
         /// Omni-Mint Instruction to mint Metaplex metadata tokens of any type
         /// </summary>
-        /// <param name="ownerAccount"></param>
-        /// <param name="mintAccount"></param>
-        /// <param name="rpcClient"></param>
-        /// <param name="isMasterEdition"></param>
-        /// <param name="mintAmount"></param>
+        /// <param name="ownerAccount">Owner Account</param>
+        /// <param name="mintAccount">Mint Account</param>
+        /// <param name="isMasterEdition"> Is master edition?</param>
+        /// <param name="mintAmount">Amount that will be minted</param>
         /// <param name="_Authority"> Authority Address - Optional </param>
-        /// <param name="_UpdateAuthority"></param>
-        /// <param name="_payerAddress"></param>
-        /// <param name="delegateAddress"></param>
-        /// <param name="delegateRole"></param>
+        /// <param name="_UpdateAuthority">Update Authority Address - Optional</param>
+        /// <param name="_payerAddress">Fee payer address - Optional</param>
+        /// <param name="delegateAddress">Delegate address - Optional</param>
+        /// <param name="delegateRole">Delegate role - Optional</param>
         /// <returns></returns>
-        public async Task<RequestResult<string>> Mint(Account ownerAccount, Account mintAccount, IRpcClient rpcClient, bool isMasterEdition, int mintAmount = 1, PublicKey _Authority = null, Account _UpdateAuthority = null, PublicKey _payerAddress = null, PublicKey delegateAddress = null, MetadataDelegateRole delegateRole = MetadataDelegateRole.Update)
+        public async Task<RequestResult<string>> Mint(Account ownerAccount, Account mintAccount, bool isMasterEdition, int mintAmount = 1, PublicKey _Authority = null, Account _UpdateAuthority = null, PublicKey _payerAddress = null, PublicKey delegateAddress = null, MetadataDelegateRole delegateRole = MetadataDelegateRole.Update)
         {
             PublicKey Authority = ownerAccount.PublicKey;
             Account UpdateAuthority = ownerAccount;
@@ -176,7 +175,7 @@ namespace Solnet.Metaplex.NFT
 
 
             TransactionInstruction mintPNFT = MetadataProgram.Mint(AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(ownerAccount, mintAccount), metadataAddress, masterEditionAddress, mintAccount, Authority, PayerAddress, delegateRecord, tokenRecord, ownerAccount, rulesetAddress, mintAmount);
-            RequestResult<ResponseValue<LatestBlockHash>> blockHash = await rpcClient.GetLatestBlockHashAsync();
+            RequestResult<ResponseValue<LatestBlockHash>> blockHash = await RpcClient.GetLatestBlockHashAsync();
 
             byte[] OmniMintInstruction = new TransactionBuilder().
             SetRecentBlockHash(blockHash.Result.Value.Blockhash).
