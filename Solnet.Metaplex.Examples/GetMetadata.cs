@@ -47,8 +47,9 @@ public class GetMetadataExample : IRunnableExample
         {
             if(attribute != null)
                Console.WriteLine($"Attribute: { attribute.trait_type } | { attribute.value }");
+
         }
-            
+
         Console.WriteLine ( "------------------");
     }
 }
