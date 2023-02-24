@@ -15,7 +15,7 @@ namespace Solnet.Metaplex.NFT
     /// <summary>
     ///  A simple Metaplex Client to make create and minting metadata tokens extremely easy
     /// </summary>
-    public class MetaplexClient
+    public class MetadataClient
     {
         /// <summary>
         /// RPC client used to send transactions to the blockchain
@@ -26,7 +26,7 @@ namespace Solnet.Metaplex.NFT
         /// Initialize metaplex client
         /// </summary>
         /// <param name="_RPCclient"></param>
-        public MetaplexClient(IRpcClient _RPCclient)
+        public MetadataClient(IRpcClient _RPCclient)
         {
             RpcClient = _RPCclient;
         }

@@ -1,26 +1,19 @@
-using Solnet.Metaplex.Auctionhouse.Accounts;
-using Solnet.Metaplex.Auctionhouse.Errors;
+#pragma warning disable CS1591
 using Solnet.Metaplex.Auctionhouse.Types;
-using Solnet.Programs.Abstract;
 using Solnet.Programs.Utilities;
-using Solnet.Rpc;
-using Solnet.Rpc.Core.Http;
-using Solnet.Rpc.Core.Sockets;
-using Solnet.Rpc.Types;
+using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Solnet.Metaplex.Auctionhouse
 {
     public static class AuctionHouseProgram
     {
-        public static Solnet.Rpc.Models.TransactionInstruction WithdrawFromFee(WithdrawFromFeeAccounts accounts, ulong amount, PublicKey programId)
+        public static TransactionInstruction WithdrawFromFee(WithdrawFromFeeAccounts accounts, ulong amount, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FeeWithdrawalDestination, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Authority, true), AccountMeta.Writable(accounts.FeeWithdrawalDestination, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.AuctionHouse, false), AccountMeta.ReadOnly(accounts.SystemProgram, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(4256943025411772595UL, offset);
@@ -29,13 +22,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction WithdrawFromTreasury(WithdrawFromTreasuryAccounts accounts, ulong amount, PublicKey programId)
+        public static TransactionInstruction WithdrawFromTreasury(WithdrawFromTreasuryAccounts accounts, ulong amount, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TreasuryWithdrawalDestination, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseTreasury, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.Authority, true), AccountMeta.Writable(accounts.TreasuryWithdrawalDestination, false), AccountMeta.Writable(accounts.AuctionHouseTreasury, false), AccountMeta.Writable(accounts.AuctionHouse, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(12253248092804391936UL, offset);
@@ -44,13 +37,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction UpdateAuctionHouse(UpdateAuctionHouseAccounts accounts, ushort? sellerFeeBasisPoints, bool? requiresSignOff, bool? canChangeSalePrice, PublicKey programId)
+        public static TransactionInstruction UpdateAuctionHouse(UpdateAuctionHouseAccounts accounts, ushort? sellerFeeBasisPoints, bool? requiresSignOff, bool? canChangeSalePrice, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Payer, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.NewAuthority, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FeeWithdrawalDestination, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TreasuryWithdrawalDestination, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryWithdrawalDestinationOwner, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.Payer, true), AccountMeta.ReadOnly(accounts.Authority, true), AccountMeta.ReadOnly(accounts.NewAuthority, false), AccountMeta.Writable(accounts.FeeWithdrawalDestination, false), AccountMeta.Writable(accounts.TreasuryWithdrawalDestination, false), AccountMeta.ReadOnly(accounts.TreasuryWithdrawalDestinationOwner, false), AccountMeta.Writable(accounts.AuctionHouse, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(15849575501573314388UL, offset);
@@ -96,13 +89,13 @@ namespace Solnet.Metaplex.Auctionhouse
 
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction CreateAuctionHouse(CreateAuctionHouseAccounts accounts, byte bump, byte feePayerBump, byte treasuryBump, ushort sellerFeeBasisPoints, bool requiresSignOff, bool canChangeSalePrice, PublicKey programId)
+        public static TransactionInstruction CreateAuctionHouse(CreateAuctionHouseAccounts accounts, byte bump, byte feePayerBump, byte treasuryBump, ushort sellerFeeBasisPoints, bool requiresSignOff, bool canChangeSalePrice, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Payer, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FeeWithdrawalDestination, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TreasuryWithdrawalDestination, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryWithdrawalDestinationOwner, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseTreasury, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.Writable(accounts.Payer, true), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.Writable(accounts.FeeWithdrawalDestination, false), AccountMeta.Writable(accounts.TreasuryWithdrawalDestination, false), AccountMeta.ReadOnly(accounts.TreasuryWithdrawalDestinationOwner, false), AccountMeta.Writable(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.AuctionHouseTreasury, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(17403825381545493213UL, offset);
@@ -121,13 +114,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 1;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction Buy(BuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction Buy(BuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.PaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TransferAuthority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, true), AccountMeta.Writable(accounts.PaymentAccount, false), AccountMeta.ReadOnly(accounts.TransferAuthority, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(16927863322537952870UL, offset);
@@ -142,13 +135,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerBuy(AuctioneerBuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction AuctioneerBuy(AuctioneerBuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.PaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TransferAuthority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, true), AccountMeta.Writable(accounts.PaymentAccount, false), AccountMeta.ReadOnly(accounts.TransferAuthority, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(15000699694727129617UL, offset);
@@ -163,13 +156,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction PublicBuy(PublicBuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction PublicBuy(PublicBuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.PaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TransferAuthority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, true), AccountMeta.Writable(accounts.PaymentAccount, false), AccountMeta.ReadOnly(accounts.TransferAuthority, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(12326578860498506921UL, offset);
@@ -184,13 +177,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerPublicBuy(AuctioneerPublicBuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction AuctioneerPublicBuy(AuctioneerPublicBuyAccounts accounts, byte tradeStateBump, byte escrowPaymentBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.PaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TransferAuthority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, true), AccountMeta.Writable(accounts.PaymentAccount, false), AccountMeta.ReadOnly(accounts.TransferAuthority, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(9139261969753436125UL, offset);
@@ -205,13 +198,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction Cancel(CancelAccounts accounts, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction Cancel(CancelAccounts accounts, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Wallet, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Wallet, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.TokenMint, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.TradeState, false), AccountMeta.ReadOnly(accounts.TokenProgram, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(13753127788127181800UL, offset);
@@ -222,13 +215,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerCancel(AuctioneerCancelAccounts accounts, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction AuctioneerCancel(AuctioneerCancelAccounts accounts, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Wallet, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Wallet, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.TokenMint, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.TradeState, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.TokenProgram, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(15510621914255614405UL, offset);
@@ -239,13 +232,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction Deposit(DepositAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
+        public static TransactionInstruction Deposit(DepositAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.PaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TransferAuthority, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, true), AccountMeta.Writable(accounts.PaymentAccount, false), AccountMeta.ReadOnly(accounts.TransferAuthority, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(13182846803881894898UL, offset);
@@ -256,13 +249,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerDeposit(AuctioneerDepositAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
+        public static TransactionInstruction AuctioneerDeposit(AuctioneerDepositAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.PaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TransferAuthority, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, true), AccountMeta.Writable(accounts.PaymentAccount, false), AccountMeta.ReadOnly(accounts.TransferAuthority, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(9167549250117401167UL, offset);
@@ -273,13 +266,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction ExecuteSale(ExecuteSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction ExecuteSale(ExecuteSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Buyer, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Seller, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseTreasury, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FreeTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Buyer, false), AccountMeta.Writable(accounts.Seller, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.TokenMint, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.AuctionHouseTreasury, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.Writable(accounts.SellerTradeState, false), AccountMeta.Writable(accounts.FreeTradeState, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(442251406432881189UL, offset);
@@ -296,13 +289,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction ExecutePartialSale(ExecutePartialSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, ulong? partialOrderSize, ulong? partialOrderPrice, PublicKey programId)
+        public static TransactionInstruction ExecutePartialSale(ExecutePartialSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, ulong? partialOrderSize, ulong? partialOrderPrice, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Buyer, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Seller, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseTreasury, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FreeTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Buyer, false), AccountMeta.Writable(accounts.Seller, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.TokenMint, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.AuctionHouseTreasury, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.Writable(accounts.SellerTradeState, false), AccountMeta.Writable(accounts.FreeTradeState, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(9640979960313352867UL, offset);
@@ -345,13 +338,13 @@ namespace Solnet.Metaplex.Auctionhouse
 
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerExecuteSale(AuctioneerExecuteSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction AuctioneerExecuteSale(AuctioneerExecuteSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Buyer, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Seller, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseTreasury, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FreeTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Buyer, false), AccountMeta.Writable(accounts.Seller, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.TokenMint, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.AuctionHouseTreasury, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.Writable(accounts.SellerTradeState, false), AccountMeta.Writable(accounts.FreeTradeState, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(3828952466324487492UL, offset);
@@ -368,13 +361,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerExecutePartialSale(AuctioneerExecutePartialSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, ulong? partialOrderSize, ulong? partialOrderPrice, PublicKey programId)
+        public static TransactionInstruction AuctioneerExecutePartialSale(AuctioneerExecutePartialSaleAccounts accounts, byte escrowPaymentBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, ulong? partialOrderSize, ulong? partialOrderPrice, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Buyer, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Seller, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseTreasury, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BuyerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FreeTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Buyer, false), AccountMeta.Writable(accounts.Seller, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.TokenMint, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.Writable(accounts.SellerPaymentReceiptAccount, false), AccountMeta.Writable(accounts.BuyerReceiptTokenAccount, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.AuctionHouseTreasury, false), AccountMeta.Writable(accounts.BuyerTradeState, false), AccountMeta.Writable(accounts.SellerTradeState, false), AccountMeta.Writable(accounts.FreeTradeState, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(3897178974466223113UL, offset);
@@ -417,13 +410,13 @@ namespace Solnet.Metaplex.Auctionhouse
 
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction Sell(SellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction Sell(SellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, ulong buyerPrice, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FreeSellerTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.SellerTradeState, false), AccountMeta.Writable(accounts.FreeSellerTradeState, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(12502976635542562355UL, offset);
@@ -440,13 +433,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerSell(AuctioneerSellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, ulong tokenSize, PublicKey programId)
+        public static TransactionInstruction AuctioneerSell(AuctioneerSellAccounts accounts, byte tradeStateBump, byte freeTradeStateBump, byte programAsSignerBump, ulong tokenSize, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Wallet, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.TokenAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Metadata, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.SellerTradeState, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.FreeSellerTradeState, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Wallet, false), AccountMeta.Writable(accounts.TokenAccount, false), AccountMeta.ReadOnly(accounts.Metadata, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.Writable(accounts.SellerTradeState, false), AccountMeta.Writable(accounts.FreeSellerTradeState, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.ProgramAsSigner, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(13194081782167649531UL, offset);
@@ -461,13 +454,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction Withdraw(WithdrawAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
+        public static TransactionInstruction Withdraw(WithdrawAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.ReceiptAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, false), AccountMeta.Writable(accounts.ReceiptAccount, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(2495396153584390839UL, offset);
@@ -478,13 +471,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction AuctioneerWithdraw(AuctioneerWithdrawAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
+        public static TransactionInstruction AuctioneerWithdraw(AuctioneerWithdrawAccounts accounts, byte escrowPaymentBump, ulong amount, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.ReceiptAccount, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TreasuryMint, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Authority, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.TokenProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AtaProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, false), AccountMeta.Writable(accounts.ReceiptAccount, false), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.TreasuryMint, false), AccountMeta.ReadOnly(accounts.Authority, false), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, true), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.AuctionHouseFeeAccount, false), AccountMeta.ReadOnly(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.TokenProgram, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.AtaProgram, false), AccountMeta.ReadOnly(accounts.Rent, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(17056415642336077397UL, offset);
@@ -495,13 +488,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction CloseEscrowAccount(CloseEscrowAccountAccounts accounts, byte escrowPaymentBump, PublicKey programId)
+        public static TransactionInstruction CloseEscrowAccount(CloseEscrowAccountAccounts accounts, byte escrowPaymentBump, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Wallet, true), Solnet.Rpc.Models.AccountMeta.Writable(accounts.EscrowPaymentAccount, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.ReadOnly(accounts.Wallet, true), AccountMeta.Writable(accounts.EscrowPaymentAccount, false), AccountMeta.ReadOnly(accounts.AuctionHouse, false), AccountMeta.ReadOnly(accounts.SystemProgram, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(3103629459430845137UL, offset);
@@ -510,13 +503,13 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 1;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction DelegateAuctioneer(DelegateAuctioneerAccounts accounts, AuthorityScope[] scopes, PublicKey programId)
+        public static TransactionInstruction DelegateAuctioneer(DelegateAuctioneerAccounts accounts, AuthorityScope[] scopes, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Authority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.Authority, true), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, false), AccountMeta.Writable(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.SystemProgram, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(16067626630961214058UL, offset);
@@ -531,13 +524,13 @@ namespace Solnet.Metaplex.Auctionhouse
 
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction UpdateAuctioneer(UpdateAuctioneerAccounts accounts, AuthorityScope[] scopes, PublicKey programId)
+        public static TransactionInstruction UpdateAuctioneer(UpdateAuctioneerAccounts accounts, AuthorityScope[] scopes, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.AuctionHouse, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Authority, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.AuctioneerAuthority, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.AhAuctioneerPda, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.AuctionHouse, false), AccountMeta.Writable(accounts.Authority, true), AccountMeta.ReadOnly(accounts.AuctioneerAuthority, false), AccountMeta.Writable(accounts.AhAuctioneerPda, false), AccountMeta.ReadOnly(accounts.SystemProgram, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(15035329336285658983UL, offset);
@@ -552,13 +545,13 @@ namespace Solnet.Metaplex.Auctionhouse
 
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction PrintListingReceipt(PrintListingReceiptAccounts accounts, byte receiptBump, PublicKey programId)
+        public static TransactionInstruction PrintListingReceipt(PrintListingReceiptAccounts accounts, byte receiptBump, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Receipt, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Bookkeeper, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Instruction, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Receipt, false), AccountMeta.Writable(accounts.Bookkeeper, true), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false), AccountMeta.ReadOnly(accounts.Instruction, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(2000687075873811407UL, offset);
@@ -567,26 +560,26 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 1;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction CancelListingReceipt(CancelListingReceiptAccounts accounts, PublicKey programId)
+        public static TransactionInstruction CancelListingReceipt(CancelListingReceiptAccounts accounts, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Receipt, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Instruction, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Receipt, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Instruction, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(818456623680469931UL, offset);
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction PrintBidReceipt(PrintBidReceiptAccounts accounts, byte receiptBump, PublicKey programId)
+        public static TransactionInstruction PrintBidReceipt(PrintBidReceiptAccounts accounts, byte receiptBump, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Receipt, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Bookkeeper, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Instruction, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Receipt, false), AccountMeta.Writable(accounts.Bookkeeper, true), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false), AccountMeta.ReadOnly(accounts.Instruction, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(15727767197790697822UL, offset);
@@ -595,26 +588,26 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 1;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction CancelBidReceipt(CancelBidReceiptAccounts accounts, PublicKey programId)
+        public static TransactionInstruction CancelBidReceipt(CancelBidReceiptAccounts accounts, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.Receipt, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Instruction, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.Receipt, false), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Instruction, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(3148063267756928246UL, offset);
             offset += 8;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
 
-        public static Solnet.Rpc.Models.TransactionInstruction PrintPurchaseReceipt(PrintPurchaseReceiptAccounts accounts, byte purchaseReceiptBump, PublicKey programId)
+        public static TransactionInstruction PrintPurchaseReceipt(PrintPurchaseReceiptAccounts accounts, byte purchaseReceiptBump, PublicKey programId)
         {
-            List<Solnet.Rpc.Models.AccountMeta> keys = new()
-                {Solnet.Rpc.Models.AccountMeta.Writable(accounts.PurchaseReceipt, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.ListingReceipt, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.BidReceipt, false), Solnet.Rpc.Models.AccountMeta.Writable(accounts.Bookkeeper, true), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.SystemProgram, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Rent, false), Solnet.Rpc.Models.AccountMeta.ReadOnly(accounts.Instruction, false)};
+            List<AccountMeta> keys = new()
+                {AccountMeta.Writable(accounts.PurchaseReceipt, false), AccountMeta.Writable(accounts.ListingReceipt, false), AccountMeta.Writable(accounts.BidReceipt, false), AccountMeta.Writable(accounts.Bookkeeper, true), AccountMeta.ReadOnly(accounts.SystemProgram, false), AccountMeta.ReadOnly(accounts.Rent, false), AccountMeta.ReadOnly(accounts.Instruction, false)};
             byte[] _data = new byte[1200];
             int offset = 0;
             _data.WriteU64(10332445790973958883UL, offset);
@@ -623,7 +616,7 @@ namespace Solnet.Metaplex.Auctionhouse
             offset += 1;
             byte[] resultData = new byte[offset];
             Array.Copy(_data, resultData, offset);
-            return new Solnet.Rpc.Models.TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
+            return new TransactionInstruction { Keys = keys, ProgramId = programId.KeyBytes, Data = resultData };
         }
     }
 }

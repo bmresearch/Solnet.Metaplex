@@ -99,15 +99,15 @@ namespace Solnet.Metaplex.Auctionhouse
         /// <param name="programAddress"></param>
         /// <param name="commitment"></param>
         /// <returns></returns>
-        public async Task<ProgramAccountsResultWrapper<List<Auctioneer>>> GetAuctioneersAsync(string programAddress, Commitment commitment = Commitment.Finalized)
+        public async Task<ProgramAccountsResultWrapper<List<AuctioneerUser>>> GetAuctioneersAsync(string programAddress, Commitment commitment = Commitment.Finalized)
         {
-            var list = new List<MemCmp> { new MemCmp { Bytes = Auctioneer.ACCOUNT_DISCRIMINATOR_B58, Offset = 0 } };
+            var list = new List<MemCmp> { new MemCmp { Bytes = AuctioneerUser.ACCOUNT_DISCRIMINATOR_B58, Offset = 0 } };
             var res = await RpcClient.GetProgramAccountsAsync(programAddress, commitment, memCmpList: list);
             if (!res.WasSuccessful || !(res.Result?.Count > 0))
-                return new ProgramAccountsResultWrapper<List<Auctioneer>>(res);
-            List<Auctioneer> resultingAccounts = new List<Auctioneer>(res.Result.Count);
-            resultingAccounts.AddRange(res.Result.Select(result => Auctioneer.Deserialize(Convert.FromBase64String(result.Account.Data[0]))));
-            return new ProgramAccountsResultWrapper<List<Auctioneer>>(res, resultingAccounts);
+                return new ProgramAccountsResultWrapper<List<AuctioneerUser>>(res);
+            List<AuctioneerUser> resultingAccounts = new List<AuctioneerUser>(res.Result.Count);
+            resultingAccounts.AddRange(res.Result.Select(result => AuctioneerUser.Deserialize(Convert.FromBase64String(result.Account.Data[0]))));
+            return new ProgramAccountsResultWrapper<List<AuctioneerUser>>(res, resultingAccounts);
         }
         /// <summary>
         /// Retrieve Bid Receipt
@@ -171,13 +171,13 @@ namespace Solnet.Metaplex.Auctionhouse
         /// <param name="accountAddress"></param>
         /// <param name="commitment"></param>
         /// <returns></returns>
-        public async Task<AccountResultWrapper<Auctioneer>> GetAuctioneerAsync(string accountAddress, Commitment commitment = Commitment.Finalized)
+        public async Task<AccountResultWrapper<AuctioneerUser>> GetAuctioneerAsync(string accountAddress, Commitment commitment = Commitment.Finalized)
         {
             var res = await RpcClient.GetAccountInfoAsync(accountAddress, commitment);
             if (!res.WasSuccessful)
-                return new AccountResultWrapper<Auctioneer>(res);
-            var resultingAccount = Auctioneer.Deserialize(Convert.FromBase64String(res.Result.Value.Data[0]));
-            return new AccountResultWrapper<Auctioneer>(res, resultingAccount);
+                return new AccountResultWrapper<AuctioneerUser>(res);
+            var resultingAccount = AuctioneerUser.Deserialize(Convert.FromBase64String(res.Result.Value.Data[0]));
+            return new AccountResultWrapper<AuctioneerUser>(res, resultingAccount);
         }
         /// <summary>
         /// Subscribe and receive Bid receipt 
@@ -258,13 +258,13 @@ namespace Solnet.Metaplex.Auctionhouse
         /// <param name="callback"></param>
         /// <param name="commitment"></param>
         /// <returns></returns>
-        public async Task<SubscriptionState> SubscribeAuctioneerAsync(string accountAddress, Action<SubscriptionState, Solnet.Rpc.Messages.ResponseValue<AccountInfo>, Auctioneer> callback, Commitment commitment = Commitment.Finalized)
+        public async Task<SubscriptionState> SubscribeAuctioneerAsync(string accountAddress, Action<SubscriptionState, Solnet.Rpc.Messages.ResponseValue<AccountInfo>, AuctioneerUser> callback, Commitment commitment = Commitment.Finalized)
         {
             SubscriptionState res = await StreamingRpcClient.SubscribeAccountInfoAsync(accountAddress, (s, e) =>
             {
-                Auctioneer parsingResult = null;
+                AuctioneerUser parsingResult = null;
                 if (e.Value?.Data?.Count > 0)
-                    parsingResult = Auctioneer.Deserialize(Convert.FromBase64String(e.Value.Data[0]));
+                    parsingResult = AuctioneerUser.Deserialize(Convert.FromBase64String(e.Value.Data[0]));
                 callback(s, e, parsingResult);
             }, commitment);
             return res;

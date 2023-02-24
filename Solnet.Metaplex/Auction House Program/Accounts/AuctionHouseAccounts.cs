@@ -1,15 +1,11 @@
 ﻿using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+#pragma warning disable CS1591
 namespace Solnet.Metaplex.Auctionhouse.Accounts
 {
 
-        public partial class BidReceipt
+    public partial class BidReceipt
         {
             public static ulong ACCOUNT_DISCRIMINATOR => 7144813729942443706UL;
             public static ReadOnlySpan<byte> ACCOUNT_DISCRIMINATOR_BYTES => new byte[] { 186, 150, 141, 135, 59, 122, 39, 99 };
@@ -318,7 +314,7 @@ namespace Solnet.Metaplex.Auctionhouse.Accounts
             }
         }
 
-        public partial class Auctioneer
+        public partial class AuctioneerUser
         {
             public static ulong ACCOUNT_DISCRIMINATOR => 8715906234422420782UL;
             public static ReadOnlySpan<byte> ACCOUNT_DISCRIMINATOR_BYTES => new byte[] { 46, 101, 92, 150, 138, 30, 245, 120 };
@@ -329,7 +325,7 @@ namespace Solnet.Metaplex.Auctionhouse.Accounts
 
             public byte Bump { get; set; }
 
-            public static Auctioneer Deserialize(ReadOnlySpan<byte> _data)
+            public static AuctioneerUser Deserialize(ReadOnlySpan<byte> _data)
             {
                 int offset = 0;
                 ulong accountHashValue = _data.GetU64(offset);
@@ -339,7 +335,7 @@ namespace Solnet.Metaplex.Auctionhouse.Accounts
                     return null;
                 }
 
-                Auctioneer result = new Auctioneer();
+                AuctioneerUser result = new AuctioneerUser();
                 result.AuctioneerAuthority = _data.GetPubKey(offset);
                 offset += 32;
                 result.AuctionHouse = _data.GetPubKey(offset);

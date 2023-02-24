@@ -3,12 +3,8 @@ using Solnet.Rpc.Models;
 using Solnet.Wallet;
 using System;
 using System.Text;
-
-
 namespace Solnet.Metaplex.NFT.Library
 {
-
-
     class VaultAccount : Account
     {
         public VaultKey key;
@@ -22,7 +18,7 @@ namespace Solnet.Metaplex.NFT.Library
         public short tokenTypeCount;
         public VaultState state;
 
-        private UInt64 lockedPricePerShare;
+        private UInt64 lockedPricePerShare { get; set; }
 
         VaultAccount()
         {
@@ -38,10 +34,10 @@ namespace Solnet.Metaplex.NFT.Library
         {
             private AccountInfo info;
             public VaultKey key;
-            public PublicKey vault;
-            public PublicKey tokenMint;
-            public PublicKey store;
-            public short order;
+            //public PublicKey vault;
+          //public PublicKey tokenMint;
+           //public PublicKey store;
+           //public short order;
 
             SafetyDepositBox()
             {

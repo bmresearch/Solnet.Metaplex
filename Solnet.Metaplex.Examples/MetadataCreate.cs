@@ -61,7 +61,7 @@ namespace Solnet.Metaplex.Examples
             }; 
 
             //Easily create any type of metadata token. Any nullable parameters can be overrided to provide the data needed to create complex metadata tokens or use legacy instructions
-            MetaplexClient metaplexClient = new MetaplexClient(client);
+            MetadataClient metaplexClient = new MetadataClient(client);
            
             await metaplexClient.CreateNFT(ownerAccount, mintAccount, TokenStandard.NonFungible, tokenMetadata, false, true);
         }
