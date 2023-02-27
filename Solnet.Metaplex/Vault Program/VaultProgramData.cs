@@ -1,95 +1,93 @@
-using Solnet.Programs.Utilities;
 using Solnet.Programs;
+using Solnet.Programs.Utilities;
 using Solnet.Wallet;
 using System;
 using System.Collections.Generic;
-using System.Buffers.Binary;
 using System.IO;
-using System.Text;
 
 
-namespace Solnet.Metaplex
+namespace Solnet.Metaplex.NFT.Library
 {
 
     internal class VaultProgramData
     {
         internal static int MethodOffset = 0;
-      
-        internal static byte[] EncodeAddTokenToInactiveVault( UInt64 amount )
+
+        internal static byte[] EncodeAddTokenToInactiveVault(UInt64 amount)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) VaultProgramInstructions.Values.AddTokenToInactiveVault );
-            writer.Write( amount );
+            writer.Write((byte)VaultInstructionBook.InstructionID.AddTokenToInactiveVault);
+            writer.Write(amount);
 
             return buffer.ToArray();
         }
 
-        internal static byte[] EncodeActivateVault( UInt64 numberOfInitialShares )
+        internal static byte[] EncodeActivateVault(UInt64 numberOfInitialShares)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) VaultProgramInstructions.Values.ActivateVault );
-            writer.Write( numberOfInitialShares );
+            writer.Write((byte)VaultInstructionBook.InstructionID.ActivateVault);
+            writer.Write(numberOfInitialShares);
 
             return buffer.ToArray();
         }
 
-        internal static byte[] EncodeWithdrawTokenFromSafetyDepositBox( UInt64 Amount)
+        internal static byte[] EncodeWithdrawTokenFromSafetyDepositBox(UInt64 Amount)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) VaultProgramInstructions.Values.WithdrawTokenFromSafetyDepositBox );
-            writer.Write( Amount );
+            writer.Write((byte)VaultInstructionBook.InstructionID.WithdrawTokenFromSafetyDepositBox);
+            writer.Write(Amount);
 
             return buffer.ToArray();
         }
 
-        internal static byte[] EncodeMintFractionalShares( UInt64 amount )
+        internal static byte[] EncodeMintFractionalShares(UInt64 amount)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) VaultProgramInstructions.Values.MintFractionalShares );
-            writer.Write( amount );
+            writer.Write((byte)VaultInstructionBook.InstructionID.MintFractionalShares);
+            writer.Write(amount);
 
             return buffer.ToArray();
         }
 
-        internal static byte[] EncodeWithdrawSharesFromTreasury( UInt64 amount )
+        internal static byte[] EncodeWithdrawSharesFromTreasury(UInt64 amount)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) VaultProgramInstructions.Values.WithdrawSharesFromTreasury );
-            writer.Write( amount );
+            writer.Write((byte)VaultInstructionBook.InstructionID.WithdrawSharesFromTreasury);
+            writer.Write(amount);
 
             return buffer.ToArray();
         }
 
-        internal static byte[] EncodeAddSharesToTreasury( UInt64 amount )
+        internal static byte[] EncodeAddSharesToTreasury(UInt64 amount)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) VaultProgramInstructions.Values.AddSharesToTreasury );
-            writer.Write( amount );
+            writer.Write((byte)VaultInstructionBook.InstructionID.AddSharesToTreasury);
+            writer.Write(amount);
 
             return buffer.ToArray();
         }
 
-        internal static byte[] EncodeUpdateExternalPriceAccount( UInt64 PricePerShare, PublicKey PriceMint, bool AllowedToCombine)
+        internal static byte[] EncodeUpdateExternalPriceAccount(UInt64 PricePerShare, PublicKey PriceMint, bool AllowedToCombine)
         {
             var buffer = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(buffer);
 
-            writer.Write( (byte) VaultProgramInstructions.Values.UpdateExternalPriceAccount );
-            writer.Write( PricePerShare );
-            writer.Write( PriceMint.KeyBytes );
-            writer.Write( AllowedToCombine );
+            writer.Write((byte)VaultInstructionBook.InstructionID.UpdateExternalPriceAccount);
+            writer.Write(PricePerShare);
+            writer.Write(PriceMint.KeyBytes);
+            writer.Write(AllowedToCombine);
 
             return buffer.ToArray();
         }
@@ -97,22 +95,22 @@ namespace Solnet.Metaplex
 
         /// DECODING FUNCTIONS
 
-        internal static void DecodeInitVault( 
-            DecodedInstruction decodedInstruction, 
+        internal static void DecodeInitVault(
+            DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
-            IList<PublicKey> keys, 
+            IList<PublicKey> keys,
             byte[] keyIndices
             )
-            {
-                decodedInstruction.Values.Add("ShareMint", keys[keyIndices[0]]);
-                decodedInstruction.Values.Add("RedeemTreasuryTokenAccount", keys[keyIndices[1]]);
-                decodedInstruction.Values.Add("FractionTreasuryTokenAccount", keys[keyIndices[2]]);
-                decodedInstruction.Values.Add("Vault", keys[keyIndices[3]]); 
-                decodedInstruction.Values.Add("VaultAuthority", keys[keyIndices[4]]);
-                decodedInstruction.Values.Add("PricingLookupAddress", keys[keyIndices[5]]);
-                decodedInstruction.Values.Add("TokenProgram", keys[keyIndices[6]]);
-                decodedInstruction.Values.Add("SysVarRent", keys[keyIndices[7]]);
-            }
+        {
+            decodedInstruction.Values.Add("ShareMint", keys[keyIndices[0]]);
+            decodedInstruction.Values.Add("RedeemTreasuryTokenAccount", keys[keyIndices[1]]);
+            decodedInstruction.Values.Add("FractionTreasuryTokenAccount", keys[keyIndices[2]]);
+            decodedInstruction.Values.Add("Vault", keys[keyIndices[3]]);
+            decodedInstruction.Values.Add("VaultAuthority", keys[keyIndices[4]]);
+            decodedInstruction.Values.Add("PricingLookupAddress", keys[keyIndices[5]]);
+            decodedInstruction.Values.Add("TokenProgram", keys[keyIndices[6]]);
+            decodedInstruction.Values.Add("SysVarRent", keys[keyIndices[7]]);
+        }
 
         internal static void DecodeActivateVault(
             DecodedInstruction decodedInstruction,
@@ -129,7 +127,7 @@ namespace Solnet.Metaplex
 
             UInt64 amount = data.GetU64(1);
             decodedInstruction.Values.Add("NumberOfInitialShares", amount);
-        } 
+        }
 
         internal static void DecodeCombineVault(
             DecodedInstruction decodedInstruction,
@@ -149,7 +147,7 @@ namespace Solnet.Metaplex
             decodedInstruction.Values.Add("BurnAuthority", keys[keyIndices[8]]);
             decodedInstruction.Values.Add("PricingOracle", keys[keyIndices[9]]);
         }
-        
+
 
         internal static void DecodeAddTokenToInactiveVault(
             DecodedInstruction decodedInstruction,
@@ -185,7 +183,7 @@ namespace Solnet.Metaplex
             decodedInstruction.Values.Add("BurnAuthority", keys[keyIndices[5]]);
             decodedInstruction.Values.Add("Vault", keys[keyIndices[6]]);
         }
-        
+
         internal static void DecodeAddSharesToTreasury(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
@@ -268,7 +266,7 @@ namespace Solnet.Metaplex
             decodedInstruction.Values.Add("PriceMint", keys[keyIndices[1]]);
             decodedInstruction.Values.Add("AllowedToCombine", data.GetBool(9));
         }
-        
+
         internal static void DecodeSetAuthority(
             DecodedInstruction decodedInstruction,
             ReadOnlySpan<byte> data,
