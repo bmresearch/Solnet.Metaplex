@@ -7,6 +7,7 @@ using Solnet.Rpc.Core.Http;
 using Solnet.Rpc.Messages;
 using Solnet.Rpc.Models;
 using Solnet.Wallet;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -75,7 +76,7 @@ namespace Solnet.Metaplex.NFT
             {
                 Authority = _Authority;
             }
-            if (UpdateAuthority != _UpdateAuthority && _UpdateAuthority != null)
+            if (_UpdateAuthority != null && UpdateAuthority.PublicKey != _UpdateAuthority)
             {
                 UpdateAuthority = _UpdateAuthority;
 
@@ -92,7 +93,7 @@ namespace Solnet.Metaplex.NFT
 
 
             ulong minBalanceForExemptionMint = (await RpcClient.GetMinimumBalanceForRentExemptionAsync(TokenProgram.MintAccountDataSize)).Result;
-            TransactionInstruction NFTmetadata_instruction = MetadataProgram.CreateMetadataAccount(metadataAddress, mintAccount.PublicKey, Authority, PayerAddress, UpdateAuthority, metaData, tokenStandard, isMutable, UpdateAuthorityIsSigner, masterEditionAddress, maxSupply, collectionDetails);
+            TransactionInstruction NFTmetadata_instruction = MetadataProgram.CreateMetadataAccount(metadataAddress, mintAccount.PublicKey, Authority, PayerAddress, UpdateAuthority.PublicKey, metaData, tokenStandard, isMutable, UpdateAuthorityIsSigner, masterEditionAddress, maxSupply, collectionDetails);
             TransactionInstruction mintPNFT = MetadataProgram.Mint(AssociatedTokenAccountProgram.DeriveAssociatedTokenAccount(ownerAccount, mintAccount), metadataAddress, masterEditionAddress, mintAccount, Authority, PayerAddress, delegateRecord, tokenRecord, ownerAccount, rulesetAddress, 1);
             RequestResult<ResponseValue<LatestBlockHash>> blockHash = await RpcClient.GetLatestBlockHashAsync();
             if (metadataVersion == MetadataVersion.V4)
@@ -108,6 +109,7 @@ namespace Solnet.Metaplex.NFT
                 Build(Signers);
 
                 var tx = await RpcClient.SendTransactionAsync(OmniCreateMintInstruction);
+                Console.WriteLine(tx.RawRpcResponse);
                 return tx;
             }
             else

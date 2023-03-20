@@ -30,6 +30,7 @@ namespace Solnet.Metaplex.Examples
                     var example = (IRunnableExample)t.GetConstructor(Type.EmptyTypes).Invoke(null);
 
                     example.Run();
+                    
                 }
                 else
                 {

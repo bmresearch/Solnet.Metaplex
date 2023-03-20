@@ -51,9 +51,9 @@ namespace Solnet.Metaplex.NFT.Library
         {
             List<AccountMeta> _keys = new();
 
-            AccountMeta masterEditionMeta = AccountMeta.ReadOnly(MetadataProgram.ProgramIdKey, false);
+            AccountMeta masterEditionMeta = AccountMeta.Writable(MetadataProgram.ProgramIdKey, false);
             if (masterEditionKey != null)
-                masterEditionMeta = AccountMeta.ReadOnly(masterEditionKey, false);
+                masterEditionMeta = AccountMeta.Writable(masterEditionKey, false);
 
             List<AccountMeta> OmniKeys = new()
             {
