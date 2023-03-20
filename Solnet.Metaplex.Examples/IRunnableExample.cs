@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace Solnet.Metaplex.Examples
 {
     /// <summary>
@@ -8,6 +10,6 @@ namespace Solnet.Metaplex.Examples
         /// <summary>
         /// Run the example.
         /// </summary>
-        void Run();
+        Task Run();
     }
 }

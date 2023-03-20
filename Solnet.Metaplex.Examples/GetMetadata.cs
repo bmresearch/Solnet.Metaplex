@@ -3,6 +3,7 @@ using Solnet.Wallet;
 using Solnet.Rpc;
 using System;
 using Solnet.Metaplex.NFT.Library;
+using System.Threading.Tasks;
 
 namespace Solnet.Metaplex.Examples
 {
@@ -11,7 +12,7 @@ namespace Solnet.Metaplex.Examples
 public class GetMetadataExample : IRunnableExample
 {
     string pk = "5CEeeHkyezrVpexdKjGkMv18dDRRW2tbF45yr5YfmAHt";
-    public async void Run()
+    public async Task Run()
     {
         Console.WriteLine("### Get Metadata example ###");
         Console.WriteLine("Getting account {0}", pk );

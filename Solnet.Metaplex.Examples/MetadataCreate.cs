@@ -8,6 +8,7 @@ using System.Text;
 using Solnet.Rpc.Utilities;
 using Solnet.Metaplex.NFT.Library;
 using Solnet.Metaplex.NFT;
+using System.Threading.Tasks;
 
 namespace Solnet.Metaplex.Examples
 {
@@ -21,10 +22,10 @@ namespace Solnet.Metaplex.Examples
         /// <summary>
         /// Run the example.
         /// </summary>
-        public async void Run() 
+        public async Task Run() 
         {
-
-            var client = ClientFactory.GetClient( Cluster.DevNet);
+            //Get a RPC provider link from QuickNode or use a public one provided by a community -- The default clusters are only for lite testing
+            var client = ClientFactory.GetClient( Cluster.MainNet);
             var exampleWallet = new Wallet.Wallet(pk);
 
             //Get your account either by the wallet or directly from the private key
@@ -54,7 +55,7 @@ namespace Solnet.Metaplex.Examples
                 //If your NFT has a parent collection NFT. You can specify it here
                 //collection = new Collection(collectionAddress),
 
-                uses = new Uses(UseMethod.Single, 5, 5),
+                //uses = new Uses(UseMethod.Single, 5, 5),
 
                 //If your NFT is programmable and has a ruleset then specify it here
                 //programmableConfig = new ProgrammableConfig(rulesetAddress)
@@ -63,7 +64,9 @@ namespace Solnet.Metaplex.Examples
             //Easily create any type of metadata token. Any nullable parameters can be overrided to provide the data needed to create complex metadata tokens or use legacy instructions
             MetadataClient metaplexClient = new MetadataClient(client);
            
-            await metaplexClient.CreateNFT(ownerAccount, mintAccount, TokenStandard.NonFungible, tokenMetadata, false, true);
+           var tx = await metaplexClient.CreateNFT(ownerAccount, mintAccount, TokenStandard.NonFungible, tokenMetadata, false, true);
+            Console.WriteLine(tx.RawRpcResponse);
+            Console.ReadKey();
         }
 
     }
