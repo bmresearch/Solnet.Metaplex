@@ -32,11 +32,11 @@ namespace Solnet.Metaplex.NFT.Library
         /// <summary>
         /// Creator Stream Position
         /// </summary>
-        public const int creatorSwitchOffset = 320;
+        public const int creatorSwitchOffset = 321;
         /// <summary>
         /// Creators Count Stream Position
         /// </summary>
-        public const int creatorsCountOffset = 321;
+        public const int creatorsCountOffset = 322;
 
         //Anything beyond this point is dynamically determined based on data provided
     }

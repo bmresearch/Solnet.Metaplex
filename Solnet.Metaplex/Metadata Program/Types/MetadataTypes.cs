@@ -269,6 +269,7 @@ namespace Solnet.Metaplex.NFT.Library
             editionNonce = _editionNonce;
             tokenStandard = _tokenStandard;
             programmableConfig = programmableconfig;
+            hasCreators = _creators?.Count > 0;
         }
     }
 

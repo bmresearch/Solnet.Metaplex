@@ -46,6 +46,7 @@ namespace Solnet.Metaplex.NFT.Library
             {
                 metadata = ParseData(accInfo.Data);
                 offchainData = FetchOffChainMetadata(metadata.uri);
+                this.accInfo = accInfo;
 
                 byte[] data = Convert.FromBase64String(accInfo.Data[0]);
                 Span<byte> _updateAuthority = data.AsSpan(1, 32);
@@ -96,7 +97,7 @@ namespace Solnet.Metaplex.NFT.Library
                 int uriLength = binData.GetBorshString(MetadataPacketLayout.uriOffset, out string uri);
                 uint sellerFee = binData.GetU16(MetadataPacketLayout.feeBasisOffset);
 
-                //bool hasCreators = binData.GetBool(MetadataPacketLayout.creatorSwitchOffset);
+                bool hasCreators = binData.GetBool(MetadataPacketLayout.creatorSwitchOffset);
                 byte numOfCreators = binData.GetU8(MetadataPacketLayout.creatorsCountOffset);
 
                 IList<Creator> creators = null;
@@ -104,16 +105,14 @@ namespace Solnet.Metaplex.NFT.Library
                 Collection collectionLink = null;
                 ProgrammableConfig programmableconfig = null;
                 int o = 0;
-                bool hasCreators = true;
 
-                if (binData.Length < MetadataPacketLayout.creatorsCountOffset + 5 + numOfCreators * (32 + 1 + 1))
+                if (binData.Length < MetadataPacketLayout.creatorsCountOffset + 4 + numOfCreators * (32 + 1 + 1))
                     hasCreators = false;
 
-                if (hasCreators == true)
+                if (hasCreators)
                 {
-                    creators = MetadataProgramData.DecodeCreators(binData.GetSpan(MetadataPacketLayout.creatorsCountOffset + 5, numOfCreators * (32 + 1 + 1)));
-                    o = MetadataPacketLayout.creatorsCountOffset + 5 + numOfCreators * (32 + 1 + 1);
-
+                    creators = MetadataProgramData.DecodeCreators(binData.GetSpan(MetadataPacketLayout.creatorsCountOffset + 4, numOfCreators * (32 + 1 + 1)));
+                    o = MetadataPacketLayout.creatorsCountOffset + 4 + numOfCreators * (32 + 1 + 1);
                 }
                 else
                 {
@@ -124,35 +123,31 @@ namespace Solnet.Metaplex.NFT.Library
                 o++;
                 bool isMutable = binData.GetBool(o);
                 o++;
+                // skipping option byte on edition nonce
                 o++;
                 byte editionNonce = binData.GetU8(o);
                 o++;
+                // skipping option byte on token standard
+                o++;
                 byte tokenStandard = binData.GetU8(o);
+                o++;
                 if ((o + 8) <= binData.Length)
                 {
-                    o++;
-                    o++;
                     bool hasCollectionlink = binData.GetBool(o);
                     o++;
-
                     if (hasCollectionlink)
                     {
                         var verified = binData.GetBool(o);
                         o++;
                         var key = binData.GetPubKey(o);
                         o += 32;
-
                         collectionLink = new Collection(key, verified);
-                    }
-                    else
-                    {
-                        o++;
                     }
 
                     bool isConsumable = binData.GetBool(o);
+                    o++;
                     if (isConsumable)
                     {
-                        o++;
                         byte useMethodENUM = binData.GetBytes(o, 1)[0];
                         o++;
                         string remaining = binData.GetU64(o).ToString("x");
@@ -162,19 +157,39 @@ namespace Solnet.Metaplex.NFT.Library
                         o++;
                         usesInfo = new Uses((UseMethod)useMethodENUM, Convert.ToInt32(remaining), Convert.ToInt32(total));
                     }
-                    else
+
+                    if ((o + 1) <= binData.Length)
                     {
+                        bool hasCollectionDetails = binData.GetBool(o);
                         o++;
+                        if (hasCollectionDetails)
+                        {
+                            // If this data is required it can be included at a later point.
+                            byte kindEnum = binData.GetBytes(o, 1)[0];
+                            o++;
+                            BigInteger size = binData.GetU64(o);
+                            o += 8;
+                        }
                     }
                     if ((o + 1) <= binData.Length)
                     {
                         bool isProgrammable = binData.GetBool(o);
-
+                        o++;
                         if (isProgrammable)
                         {
+                            byte programmableVersionENUM = binData.GetBytes(o, 1)[0];
                             o++;
-                            PublicKey rulesetAddress = binData.GetPubKey(o);
-                            programmableconfig = new ProgrammableConfig(rulesetAddress);
+                            if (programmableVersionENUM == 0)
+                            {
+                                bool hasRuleset = binData.GetBool(o);
+                                o++;
+                                if (hasRuleset)
+                                {
+                                    PublicKey rulesetAddress = binData.GetPubKey(o);
+                                    o += 32;
+                                    programmableconfig = new ProgrammableConfig(rulesetAddress);
+                                }
+                            }
                         }
                     }
                 }
