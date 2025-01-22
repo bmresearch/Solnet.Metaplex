@@ -123,7 +123,7 @@ Get the metadata of a token
 
 ## Contribution
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/bmresearch/Solnet.Metaplex)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/bmresearch/Solnet.Metaplex) [![Open in Codeanywhere](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/bmresearch/Solnet.Metaplex)
 
 We encourage everyone to contribute, submit issues, PRs, discuss. Every kind of help is welcome.
 
