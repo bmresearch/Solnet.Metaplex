@@ -25,6 +25,20 @@ Solana from .Net applications. This SDK only covers NFTs and the vault program. 
 Solnet.Metaplex is a package within the same `Solnet.` namespace that implements a Client for [Metaplex](https://www.metaplex.com), this project is in a
 separate repository so it is contained, as the goal for [Solnet](https://github.com/bmresearch/Solnet) was to be a core SDK.
 
+## 🌏  Open in the Cloud 
+Click any of the buttons below to start a new development environment to demo or contribute to the codebase without having to install anything on your machine:
+
+[![Open in VS Code](https://img.shields.io/badge/Open%20in-VS%20Code-blue?logo=visualstudiocode)](https://vscode.dev/github/bmresearch/Solnet.Metaplex)
+[![Open in Glitch](https://img.shields.io/badge/Open%20in-Glitch-blue?logo=glitch)](https://glitch.com/edit/#!/import/github/bmresearch/Solnet.Metaplex)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bmresearch/Solnet.Metaplex)
+[![Edit in Codesandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/bmresearch/Solnet.Metaplex)
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/bmresearch/Solnet.Metaplex)
+[![Open in Repl.it](https://replit.com/badge/github/withastro/astro)](https://replit.com/github/bmresearch/Solnet.Metaplex)
+[![Open in Codeanywhere](https://codeanywhere.com/img/open-in-codeanywhere-btn.svg)](https://app.codeanywhere.com/#https://github.com/bmresearch/Solnet.Metaplex)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/bmresearch/Solnet.Metaplex)
+
+
+
 ## Features
 
 ## Requirements
@@ -122,8 +136,6 @@ Get the metadata of a token
         Console.WriteLine ( "------------------");
 
 ## Contribution
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/bmresearch/Solnet.Metaplex)
 
 We encourage everyone to contribute, submit issues, PRs, discuss. Every kind of help is welcome.
 
