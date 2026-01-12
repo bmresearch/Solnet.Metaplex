@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net8.0": {
       "Microsoft.Extensions.Logging": {
         "type": "Direct",
         "requested": "[6.0.0, )",
@@ -41,53 +41,31 @@
         "resolved": "13.0.1",
         "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
       },
-      "Solnet.Extensions": {
+      "Solana.Programs": {
         "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "jTs3CNeA1/FSdDBMDy/MfrTx8Z3pBc9qMRFDC2lgkW8SwHfL9LG0tso/BYsckEKXPpODUxe08xCrCWtLg/Hw1Q==",
+        "requested": "[8.3.0, )",
+        "resolved": "8.3.0",
+        "contentHash": "hIyt1AkPRFLRkDRsYuNS8mwkQSIO6Ji2/mudONLwcQ+ILTqGM4iEMUP6BjzStInyookX10HZX0nKS76mkzhgiw==",
         "dependencies": {
-          "Solnet.Programs": "6.1.0",
-          "Solnet.Rpc": "6.1.0",
-          "Solnet.Wallet": "6.1.0"
+          "Solana.Rpc": "8.3.0"
         }
       },
-      "Solnet.KeyStore": {
+      "Solana.Rpc": {
         "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "CkFUXyWLahJh5KeRLNd2BqEFaeosGNhsPmmrZY9yUM92H/4hvNnw84J1RWIbw5nfsczNMp8iYf4l265+sZcKTA==",
-        "dependencies": {
-          "Chaos.NaCl.Standard": "1.0.0",
-          "Portable.BouncyCastle": "1.9.0",
-          "Solnet.Wallet": "6.1.0"
-        }
-      },
-      "Solnet.Programs": {
-        "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "q48c+KUaA+wpa/Fi3Q+tKiDwNIRlYEilwJcqOqVFqO8bC6nn2EYQRVxs8myEjBblsm+t2B5aCSS7Py+HAl9pEA==",
-        "dependencies": {
-          "Solnet.Rpc": "6.1.0"
-        }
-      },
-      "Solnet.Rpc": {
-        "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "vTAT+WlWgamnRbfRBbV018aWiDXeXDCr7iBTOqIEpiZ4in2IfXC+K4upIPvL3H0KOSpApjVWm3mbuN4kao5IVQ==",
+        "requested": "[8.3.0, )",
+        "resolved": "8.3.0",
+        "contentHash": "1GDMxsgHmpW93NyQ9+KzQVuu+UIngEiZhaVDzXPUyD+QRsMC+fNOoxI0K5V1nCcJEv+204V9aUgUhoaB978WIg==",
         "dependencies": {
           "Microsoft.Extensions.Logging": "6.0.0",
           "Microsoft.Extensions.Logging.Console": "6.0.0",
-          "Solnet.Wallet": "6.1.0"
+          "Solana.Wallet": "8.3.0"
         }
       },
-      "Solnet.Wallet": {
+      "Solana.Wallet": {
         "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "qAacwo1RegP36lMqs5wIuvF5FIKUS3KWqbg0NfQMALwtAK040wDePRjxBmP/ovvx+UkWTx6FXRlSq0yXaKiolA==",
+        "requested": "[8.3.0, )",
+        "resolved": "8.3.0",
+        "contentHash": "KWCybD7wcnOM8NIUxnjn/QYY487Fevv2cvJhA27bFWeux0I5ThEbXBXMQuZ5YVc4VKRRpy+ULXfuoL6M83kASg==",
         "dependencies": {
           "Chaos.NaCl.Standard": "1.0.0",
           "Portable.BouncyCastle": "1.9.0"
