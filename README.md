@@ -76,9 +76,9 @@ Create & Mint a Fungible, Semi-Fungible, Non-Fungible, or Programmable metadata 
             }; 
 
             //Easily create any type of metadata token. Any nullable parameters can be overrided to provide the data needed to create complex metadata tokens or use legacy instructions
-            MetaplexClient metaplexClient = new MetaplexClient(client);
+            MetadataClient metadataClient = new MetadataClient(client);
            
-            await metaplexClient.CreateNFT(ownerAccount, mintAccount, TokenStandard.NonFungible, tokenMetadata, false, true);
+            await metadataClient.CreateNFT(ownerAccount, mintAccount, TokenStandard.NonFungible, tokenMetadata, false, true);
 
 Get the metadata of a token
         
