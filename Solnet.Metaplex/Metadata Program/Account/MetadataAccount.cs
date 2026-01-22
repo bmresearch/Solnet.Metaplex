@@ -216,7 +216,7 @@ namespace Solnet.Metaplex.NFT.Library
         {
             var accInfoResponse = await client.GetAccountInfoAsync(tokenAddress.Key);
 
-            if (accInfoResponse.WasSuccessful)
+            if (accInfoResponse.WasSuccessful && accInfoResponse.Result.Value != null)
             {
                 AccountInfo accInfo = accInfoResponse.Result.Value;
                 //Account Inception loop to retrieve metadata
